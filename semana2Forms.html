@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Formulario de Votación</title>
+</head>
+
+<body>
+    <h1>Votaciones Nacionales</h1>
+    <p>Por favor complete todos los campos para registrar su voto.</p>
+
+    <form action="https://dummyjson.com/test" method="POST">
+        <label for="Name">Nombre completo</label><br>
+        <input type="text" id="Name" name="Name" required><br><br>
+
+        <label for="email">Correo</label><br>
+        <input type="email" id="email" name="email" required><br><br>
+
+        <label for="ID">Número de Identificación</label><br>
+        <input type="text" id="ID" name="ID" required><br><br>
+
+        <label for="phone_number">Teléfono</label><br>
+        <input type="tel" id="phone_number" name="phone_number" required><br><br>
+
+        <label for="type">Seleccione un candidato</label><br>
+        <select name="type" id="type" required>
+            <option value="" disabled selected>Lista de candidatos</option>
+            <option value="candidato_1">Candidato #1</option>
+            <option value="candidato_2">Candidato #2</option>
+            <option value="candidato_3">Candidato #3</option>
+        </select><br><br>
+
+        <input type="submit" value="Confirmar voto">
+    </form>
+</body>
+
+</html>
