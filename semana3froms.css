@@ -1,0 +1,103 @@
+body{
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  color: var(--text);
+  background: #024eff;   
+}
+
+
+.from-container {
+  max-width: 500px;
+  margin: 40px auto;
+  padding: 55px 70px 150px 70px;
+  font-family: Arial, sans-serif;
+  background: white;
+  border-radius: 10px;
+}
+
+.from-container::before {
+  content: "";
+  display: block;
+  width: 36px;          
+  height: 6px;          
+  background: #3b82f6;  
+  border-radius: 915px; 
+  margin-bottom: 16px;
+}
+
+
+
+.from-container p {
+  margin: 0 0 24px;
+  color: #555;
+  font-size: 1.05rem;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px; 
+}
+
+
+input[type="text"],
+select,
+textarea {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;                  
+  border-radius: 2px;
+  background-color: #f1f6fa;    
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+select {
+  width: 100%;
+  padding: 14px 16px;
+  border: none;
+  border-radius: 8px;    
+  background-color: #f1f6fa;
+  font-size: 1rem;
+  color: #94a3b8;         
+  box-sizing: border-box;
+  appearance: none;      
+}
+
+
+input::placeholder,
+textarea::placeholder {
+  color: #94a3b8;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  background: #ffffff;  
+  border: 1px solid #d0d7de;
+  box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+}
+
+
+input[type="submit"] {
+    width: 50%;
+  background-color: #3b82f6;
+  color: white;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 3px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+input[type="submit"]:hover {
+  background-color: #2563eb;
+}
+#texto1 {
+
+  color: #94a3b8;
+
+}
