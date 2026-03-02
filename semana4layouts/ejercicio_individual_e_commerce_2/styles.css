@@ -1,0 +1,265 @@
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  color: #333;
+  background: #fff;
+}
+
+a { text-decoration: none; color: inherit; }
+
+img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover; 
+}
+
+
+.navbar {
+  display: flex;
+  align-items: center;
+  padding: 14px 40px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #e05c2a;
+  margin-right: 40px; 
+}
+
+.nav-links {
+  display: flex;
+  list-style: none; 
+  gap: 28px;
+}
+
+.nav-links a {
+  font-size: 0.92rem;
+  color: #555;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: #e05c2a; }
+
+.nav-search {
+  margin-left: auto; 
+}
+
+.nav-search input {
+  border: 1px solid #ccc;
+  padding: 8px 16px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  width: 180px;
+}
+
+.hero {
+  display: flex;
+  align-items: center;
+  background: #fde8e8; 
+  padding: 48px 60px;
+  margin: 24px 40px;
+  border-radius: 8px;
+  gap: 40px;
+  min-height: 240px;
+}
+
+.hero-text { flex: 1; }
+
+.hero-text h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #222;
+  margin-bottom: 12px;
+}
+
+.hero-desc {
+  font-size: 0.88rem;
+  color: #666;
+  line-height: 1.6;
+  max-width: 360px;
+  margin-bottom: 16px;
+}
+
+.hero-price {
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: #e05c2a; 
+  margin-bottom: 16px;
+}
+
+.btn-buy {
+  display: inline-block;
+  background: #e91e8c; 
+  color: white;
+  padding: 10px 22px;
+  border-radius: 4px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+}
+.btn-buy:hover { background: #c21878; }
+
+.hero-image {
+  flex: 1;
+  max-width: 300px;
+  height: 180px;
+}
+
+
+
+.catalog {
+  padding: 20px 40px 60px;
+}
+
+.category-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #222;
+  margin: 36px 0 20px;
+}
+
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  overflow: hidden;
+  text-align: center;
+  background: white;
+}
+
+.card-img {
+  height: 200px;
+  background: #f9f9f9; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.card-img img {
+  object-fit: contain; 
+  height: 100%;
+  width: auto;
+}
+
+.card-body {
+  padding: 16px 20px 20px;
+}
+
+.card-body h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: #222;
+}
+
+.card-body p {
+  font-size: 0.82rem;
+  color: #777;
+  line-height: 1.5;
+  margin-bottom: 12px;
+}
+
+.card-price {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #333;
+  margin-bottom: 14px;
+}
+
+.btn-card {
+  background: #222;       
+  color: white;
+  border: none;
+  padding: 10px 30px;
+  border-radius: 4px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-card:hover { background: #444; }
+
+
+
+.footer {
+  background: #fde8e8; 
+  padding: 60px 40px 30px;
+  text-align: center;
+}
+
+.footer-inner {
+  max-width: 500px;
+  margin: 0 auto; 
+}
+
+.footer h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase; 
+  color: #222;
+  margin-bottom: 8px;
+}
+
+.footer p {
+  font-size: 0.88rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.contact-form {
+  display: flex;        
+  justify-content: center;
+  gap: 0;               
+}
+
+.contact-form input {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  font-size: 0.9rem;
+  font-family: inherit;
+  outline: none;
+  width: 260px;
+}
+
+.btn-send {
+  background: #e91e8c; 
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+}
+.btn-send:hover { background: #c21878; }
+
+.footer-copy {
+  margin-top: 40px;
+  font-size: 0.78rem;
+  color: #999;
+}
