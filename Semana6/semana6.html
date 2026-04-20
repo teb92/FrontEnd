@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>DOM Exercises</title>
+</head>
+
+<body>
+
+    <!-- Exercise 1 -->
+    <h2>Exercise 1 - List</h2>
+    <ol id="list"></ol>
+    <button onclick="addElement()">Add element</button>
+    <button onclick="clearList()">Clear list</button>
+
+    <hr>
+
+    <!-- Exercise 2 -->
+    <h2>Exercise 2 - Display text</h2>
+    <input type="text" id="myInput" placeholder="Type something...">
+    <button onclick="showText()">Show</button>
+    <p id="result"></p>
+
+    <hr>
+
+    <!-- Exercise 3 -->
+    <h2>Exercise 3 - Form</h2>
+    <form id="myForm">
+        <label>Email: <input type="email" id="email" placeholder="email@example.com"></label><br><br>
+        <label>Password: <input type="password" id="password" placeholder="Password"></label><br><br>
+        <label>First name: <input type="text" id="firstName" placeholder="First name"></label><br><br>
+        <label>Last name: <input type="text" id="lastName" placeholder="Last name"></label><br><br>
+
+        <p>Are you an employee?</p>
+        <label><input type="radio" name="employee" value="yes" onchange="toggleEmployment(this)"> Yes</label>
+        <label><input type="radio" name="employee" value="no" onchange="toggleEmployment(this)" checked> No</label>
+
+        <div id="employmentField" style="display: none;">
+            <br>
+            <label>Workplace: <input type="text" id="workplace" placeholder="Company name"></label>
+        </div>
+
+        <br><br>
+        <button type="button" onclick="submitForm()">Submit</button>
+    </form>
+
+    <script src="semana6.js"></script>
+
+</body>
+
+</html>
