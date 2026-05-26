@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>My Profile</title>
+    <style>
+      .card {
+        border: 1px solid #ccc;
+        padding: 16px;
+        display: inline-block;
+        margin: 8px;
+        border-radius: 8px;
+        min-width: 150px;
+      }
+      .card h3 {
+        margin: 0 0 8px 0;
+        font-size: 0.8rem;
+        color: gray;
+        text-transform: uppercase;
+      }
+      .card p {
+        margin: 0;
+        font-size: 1.1rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>My Profile</h1>
+
+    <div id="content"></div>
+
+    <br />
+    <button onclick="logout()">Log Out</button>
+
+    <script>
+      // If there is no active session, redirect to login
+      const savedUser = localStorage.getItem("user");
+      if (!savedUser) {
+        window.location.href = "login.html";
+      }
+
+      // Display the user's data as cards
+      const user = JSON.parse(savedUser);
+      const content = document.getElementById("content");
+
+      // Build the fields to display: fixed fields + everything inside data
+      const fields = {
+        ID: user.id,
+        Name: user.name,
+        ...user.data,
+      };
+
+      // Create one card per field
+      for (const [key, value] of Object.entries(fields)) {
+        // Do not display the password on screen
+        if (key === "password") continue;
+
+        const card = document.createElement("div");
+        card.className = "card";
+        card.innerHTML = `<h3>${key}</h3><p>${value}</p>`;
+        content.appendChild(card);
+      }
+
+      function logout() {
+        // Remove the session from localStorage and redirect to login
+        localStorage.removeItem("user");
+        window.location.href = "login.html";
+      }
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

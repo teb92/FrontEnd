@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Change Password</title>
+  </head>
+  <body>
+    <h1>Change Password</h1>
+
+    <input id="id" placeholder="User ID" /><br />
+    <input id="currentPassword" type="password" placeholder="Current password" /><br />
+    <input id="newPassword" type="password" placeholder="New password" /><br />
+    <input id="confirm" type="password" placeholder="Confirm new password" /><br />
+    <button onclick="changePassword()">Change Password</button>
+
+    <p id="error" style="color: red; display: none;"></p>
+    <p id="success" style="color: green; display: none;"></p>
+
+    <script>
+      async function changePassword() {
+        const id = document.getElementById("id").value.trim();
+        const currentPassword = document.getElementById("currentPassword").value.trim();
+        const newPassword = document.getElementById("newPassword").value.trim();
+        const confirm = document.getElementById("confirm").value.trim();
+
+        const errorEl = document.getElementById("error");
+        const successEl = document.getElementById("success");
+
+        // Hide previous messages
+        errorEl.style.display = "none";
+        successEl.style.display = "none";
+
+        // ── Validation 1: user must exist ────────────────────────
+        const response = await fetch(`https://api.restful-api.dev/objects/${id}`);
+
+        if (response.status === 404) {
+          errorEl.textContent = "User not found. Please check your ID.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        const user = await response.json();
+
+        // ── Validation 2: current password must be correct ───────
+        if (user.data?.password !== currentPassword) {
+          errorEl.textContent = "Current password is incorrect.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        // ── Validation 3: new password must match confirmation ───
+        if (newPassword !== confirm) {
+          errorEl.textContent = "New password and confirmation do not match.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        // ── All validations passed: send PATCH ───────────────────
+        // Merge current data with the new password to avoid losing other fields
+        const updatedData = {
+          ...user.data,
+          password: newPassword,
+        };
+
+        const patchResponse = await fetch(`https://api.restful-api.dev/objects/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: updatedData }),
+        });
+
+        if (!patchResponse.ok) {
+          errorEl.textContent = "An error occurred while updating the password. Please try again.";
+          errorEl.style.display = "block";
+          return;
+        }
+
+        // If the user has an active session, update localStorage too so it stays in sync
+        const savedUser = localStorage.getItem("user");
+        if (savedUser) {
+          const localUser = JSON.parse(savedUser);
+          if (localUser.id === id) {
+            localUser.data.password = newPassword;
+            localStorage.setItem("user", JSON.stringify(localUser));
+          }
+        }
+
+        successEl.textContent = "Password updated successfully!";
+        successEl.style.display = "block";
+      }
+    </script>
+    <script src="nav.js"></script>
+  </body>
+</html>

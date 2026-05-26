@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fetch Exercises</title>
+  </head>
+  <body>
+    <h1>Fetch Exercises</h1>
+
+    <!-- Exercise 1 -->
+    <h2>Exercise 1 - List objects</h2>
+    <button onclick="exercise1()">Run GET</button>
+    <pre id="out1"></pre>
+
+    <!-- Exercise 2 -->
+    <h2>Exercise 2 - Create user</h2>
+    <input id="name" placeholder="Name" /><br />
+    <input id="email" placeholder="Email" /><br />
+    <input id="password" placeholder="Password" type="password" /><br />
+    <input id="address" placeholder="Address" /><br />
+    <button onclick="exercise2()">Create user</button>
+    <pre id="out2"></pre>
+
+    <!-- Exercise 3 -->
+    <h2>Exercise 3 - Get user by ID</h2>
+    <input id="idSearch" placeholder="User ID" />
+    <button onclick="exercise3()">Search</button>
+    <pre id="out3"></pre>
+
+    <!-- Exercise 4 -->
+    <h2>Exercise 4 - Update address</h2>
+    <input id="idUpdate" placeholder="User ID" /><br />
+    <input id="newAddress" placeholder="New address" /><br />
+    <button onclick="exercise4()">Update</button>
+    <pre id="out4"></pre>
+
+    <script>
+      // ── Exercise 1 ───────────────────────────────────────────
+      async function exercise1() {
+        const response = await fetch("https://api.restful-api.dev/objects");
+        const objects = await response.json();
+
+        const objectsWithData = objects.filter(
+          (obj) => obj.data !== null && obj.data !== undefined
+        );
+
+        const results = objectsWithData.map((obj) => {
+          const details = Object.entries(obj.data)
+            .map(([k, v]) => `${k}: ${v}`)
+            .join(", ");
+          return `${obj.name} (${details})`;
+        });
+
+        document.getElementById("out1").textContent = results.join("\n");
+      }
+
+      // ── Exercise 2 ───────────────────────────────────────────
+      async function exercise2() {
+        const name = document.getElementById("name").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const address = document.getElementById("address").value;
+
+        const response = await fetch("https://api.restful-api.dev/objects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            data: { email, password, address },
+          }),
+        });
+
+        const user = await response.json();
+        document.getElementById("out2").textContent = JSON.stringify(user, null, 2);
+      }
+
+      // ── Exercise 3 ───────────────────────────────────────────
+      async function exercise3() {
+        const id = document.getElementById("idSearch").value;
+        const response = await fetch(`https://api.restful-api.dev/objects/${id}`);
+
+        if (response.status === 404) {
+          document.getElementById("out3").textContent =
+            `Error 404: No user found with ID "${id}".`;
+          return;
+        }
+
+        const user = await response.json();
+        document.getElementById("out3").textContent = JSON.stringify(user, null, 2);
+      }
+
+      // ── Exercise 4 ───────────────────────────────────────────
+      async function exercise4() {
+        const id = document.getElementById("idUpdate").value;
+        const newAddress = document.getElementById("newAddress").value;
+
+        // GET first to retrieve current data and avoid losing other fields
+        const getResponse = await fetch(`https://api.restful-api.dev/objects/${id}`);
+        const currentUser = await getResponse.json();
+
+        // Merge current data with the new address
+        const updatedData = { ...currentUser.data, address: newAddress };
+
+        const response = await fetch(`https://api.restful-api.dev/objects/${id}`, {
+          method: "PATCH",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ data: updatedData }),
+        });
+
+        const updated = await response.json();
+        document.getElementById("out4").textContent = JSON.stringify(updated, null, 2);
+      }
+    </script>
+  </body>
+</html>
