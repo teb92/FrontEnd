@@ -1,44 +1,45 @@
-// ── EXERCISE 2 ───────────────────────────────────────────────────────────────
-// Create a function that takes name, email, password and address as parameters,
-// and creates a user using the POST endpoint from the documentation.
+// ── EXERCISE 2 FETCH ─────────────────────────────────────────────────────────
+async function createObject(name, data) {
+  const out = document.getElementById("out2");
 
-//  2a: The function receives the 4 required parameters
-async function createUser(name, email, password, address) {
+  if (!name && !data) {
+    name = document.getElementById("objName")?.value.trim();
+    const email = document.getElementById("objEmail")?.value.trim();
+    const password = document.getElementById("objPassword")?.value.trim();
+    const address = document.getElementById("objAddress")?.value.trim();
 
-  // 2b: Using the POST method to the /objects endpoint
-  //  2c: Sending the Content-Type header to indicate the body is JSON
-  //  2d: Building the body with the 4 received parameters
-  const response = await fetch("https://api.restful-api.dev/objects", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      name: name,
-      data: {
-        email,
-        password,
-        address,
-      },
-    }),
-  });
+    if (!name || !email || !password || !address) {
+      if (out) out.textContent = "Error: Please fill in all fields.";
+      return null;
+    }
 
-  // 2e: Parsing the server response which includes the generated ID
-  const newUser = await response.json();
+    data = { email, password, address };
+  }
 
-  console.log("User created successfully:");
-  console.log(`  ID: ${newUser.id}`);
-  console.log(`  Name: ${newUser.name}`);
-  console.log(`  Email: ${newUser.data.email}`);
-  console.log(`  Address: ${newUser.data.address}`);
-  console.log("⚠️  Save the ID — it is the only way to retrieve this user.");
+  if (out) out.textContent = "Creating user...";
 
-  return newUser;
+  try {
+    const response = await fetch("https://api.restful-api.dev/objects", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, data }),
+    });
+
+    if (!response.ok) {
+      const serverError = `Server error: ${response.status} ${response.statusText}`;
+      if (out) out.textContent = serverError;
+      console.log(serverError);
+      return null;
+    }
+
+    const created = await response.json();
+    if (out) out.textContent = JSON.stringify(created, null, 2);
+    console.log("User created successfully:", created);
+    return created;
+  } catch (error) {
+    const netError = `Network error: ${error.message}`;
+    if (out) out.textContent = netError;
+    console.log(netError);
+    return null;
+  }
 }
-
-createUser(
-  "John Doe",
-  "john@example.com",
-  "pass1234",
-  "San Jose, Costa Rica"
-);

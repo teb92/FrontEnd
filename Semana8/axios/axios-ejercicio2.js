@@ -1,34 +1,37 @@
-// ── EXERCISE 2 ───────────────────────────────────────────────────────────────
-// Create a function that takes name, email, password and address as parameters,
-// and creates a user using the POST endpoint.
+// ── EXERCISE 2 AXIOS ─────────────────────────────────────────────────────────
+async function createObject(name, data) {
+  const out = document.getElementById("out2");
 
-// 2a: The function receives the 4 required parameters
-async function createUser(name, email, password, address) {
+  if (!name && !data) {
+    name = document.getElementById("objName")?.value.trim();
+    const email = document.getElementById("objEmail")?.value.trim();
+    const password = document.getElementById("objPassword")?.value.trim();
+    const address = document.getElementById("objAddress")?.value.trim();
 
-  // 2b: Using axios.post() to the /objects endpoint
-  //  2c: Axios adds the Content-Type: application/json header automatically
-  //  2d: The body is passed as a plain object (no JSON.stringify needed)
-  const response = await axios.post("https://api.restful-api.dev/objects", {
-    name: name,
-    data: { email, password, address },
-  });
+    if (!name || !email || !password || !address) {
+      if (out) out.textContent = "Error: Please fill in all fields.";
+      return null;
+    }
 
-  //  2e: The server response comes in response.data
-  const newUser = response.data;
+    data = { email, password, address };
+  }
 
-  console.log("User created successfully:");
-  console.log(`  ID: ${newUser.id}`);
-  console.log(`  Name: ${newUser.name}`);
-  console.log(`  Email: ${newUser.data.email}`);
-  console.log(`  Address: ${newUser.data.address}`);
-  console.log("⚠️  Save the ID — it is the only way to retrieve this user.");
+  if (out) out.textContent = "Creating user...";
 
-  return newUser;
+  try {
+    const response = await axios.post("https://api.restful-api.dev/objects", { name, data });
+    const created = response.data;
+
+    if (out) out.textContent = JSON.stringify(created, null, 2);
+    console.log("User created successfully:", created);
+    return created;
+  } catch (error) {
+    const message = error.response
+      ? `Server error: ${error.response.status} ${error.response.statusText}`
+      : `Network error: ${error.message}`;
+
+    if (out) out.textContent = message;
+    console.log(message);
+    return null;
+  }
 }
-
-createUser(
-  "John Doe",
-  "john@example.com",
-  "pass1234",
-  "San Jose, Costa Rica"
-);

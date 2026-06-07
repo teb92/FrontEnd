@@ -1,31 +1,36 @@
 // ── EXERCISE 1 ───────────────────────────────────────────────────────────────
-// Create a function that lists all elements returned from a GET to the endpoint
-// https://api.restful-api.dev/objects. Filter out results that don't return
-// `data`, and format the ones that do in a readable way.
-
-// 1a: Function that makes a GET request to the /objects endpoint with axios
 async function listObjects() {
-  const response = await axios.get("https://api.restful-api.dev/objects");
+  const out = document.getElementById("out1");
+  out.textContent = "Loading...";
 
-  const objects = response.data;
+  try {
+    const response = await axios.get("https://api.restful-api.dev/objects");
+    const objects = response.data;
 
-  //  1b: Filter out all results that do NOT have data
-  const objectsWithData = objects.filter(
-    (obj) => obj.data !== null && obj.data !== undefined
-  );
+    const objectsWithData = objects.filter((obj) => {
+      if (obj.data === null || obj.data === undefined) return false;
+      if (typeof obj.data === "object" && Object.keys(obj.data).length === 0) return false;
+      return true;
+    });
 
-  // 1c: Format the ones that DO have data in a readable way
-  const results = objectsWithData.map((obj) => {
-    const details = Object.entries(obj.data)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(", ");
-    return `${obj.name} (${details})`;
-  });
+    const results = objectsWithData.map((obj) => {
+      const details = Object.entries(obj.data)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ");
+      return `${obj.name} (${details})`;
+    });
 
-  //  1d: Display on screen
-  results.forEach((line) => console.log(line));
+    // Muestra el resultado en el HTML y en la consola
+    out.textContent = results.length > 0 ? results.join("\n") : "No results with data found.";
+    results.forEach((line) => console.log(line));
 
-  return results;
+  } catch (error) {
+    const status = error.response?.status;
+    const message = status
+      ? `Server error: ${status} ${error.response.statusText}`
+      : `Network error: ${error.message}`;
+    
+    out.textContent = message;
+    console.log(message);
+  }
 }
-
-listObjects();

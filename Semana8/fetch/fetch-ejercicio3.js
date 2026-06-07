@@ -1,32 +1,41 @@
 // ── EXERCISE 3 ───────────────────────────────────────────────────────────────
-// Create a function that returns a user from the API, taking their ID as a
-// parameter. If the user doesn't exist, it must properly handle the 404 code
-// and return an error message.
+async function getObject() {
+  const out = document.getElementById("out3");
+  const id = document.getElementById("idSearch").value.trim();
 
-//  3a: The function receives the ID as a parameter
-async function getUser(id) {
-
-  // 3b: Making a GET request to the /objects/{id} endpoint using the received ID
-  const response = await fetch(`https://api.restful-api.dev/objects/${id}`);
-
-  // 3c: Properly handling the 404 status code
-  //    The status is checked BEFORE parsing the JSON to avoid errors
-  //    If the user doesn't exist, a descriptive error message is returned
-  if (response.status === 404) {
-    const message = `Error 404: No user found with ID "${id}".`;
-    console.log(message);
-    return message; 
+  if (!id) {
+    out.textContent = "Error: Please enter an ID.";
+    return;
   }
 
-  // 3d: If the user exists, parse and return their information
-  const user = await response.json();
+  out.textContent = "Searching...";
 
-  console.log("User found:");
-  console.log(`  ID: ${user.id}`);
-  console.log(`  Name: ${user.name}`);
-  console.log(`  Data: ${JSON.stringify(user.data, null, 2)}`);
+  try {
+    const response = await fetch(`https://api.restful-api.dev/objects/${id}`);
 
-  return user;
+    if (response.status === 404) {
+      const notFoundMessage = `Error 404: No object found with ID "${id}".`;
+      out.textContent = notFoundMessage;
+      console.log(notFoundMessage);
+      return;
+    }
+
+    if (!response.ok) {
+      const serverError = `Server error: ${response.status} ${response.statusText}`;
+      out.textContent = serverError;
+      console.log(serverError);
+      return;
+    }
+
+    const object = await response.json();
+
+    out.textContent = JSON.stringify(object, null, 2);
+    console.log("Object found:", object);
+    return object;
+
+  } catch (error) {
+    const netError = `Network error: ${error.message}`;
+    out.textContent = netError;
+    console.log(netError);
+  }
 }
-
-getUser("non-existent-id");

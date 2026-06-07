@@ -3,110 +3,40 @@
 
 <head>
   <meta charset="UTF-8" />
-  <title>Axios Exercises</title>
+  <title>Axios Exercises (User Mode)</title>
   <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 
 <body>
-  <h1>Axios Exercises</h1>
+  <h1>Axios Exercises - User Management</h1>
 
-  <!-- Exercise 1 -->
-  <h2>Exercise 1 - List objects</h2>
-  <button onclick="exercise1()">Run GET</button>
+  <h2>Exercise 1 - List Registered Users</h2>
+  <button onclick="listObjects()">Run GET</button>
   <pre id="out1"></pre>
 
-  <!-- Exercise 2 -->
-  <h2>Exercise 2 - Create user</h2>
-  <input id="name" placeholder="Name" /><br />
-  <input id="email" placeholder="Email" /><br />
-  <input id="password" placeholder="Password" type="password" /><br />
-  <input id="address" placeholder="Address" /><br />
-  <button onclick="exercise2()">Create user</button>
+  <h2>Exercise 2 - Create User Account</h2>
+  <input id="objName" placeholder="Full Name" /><br />
+  <input id="objEmail" placeholder="Email" /><br />
+  <input id="objPassword" type="password" placeholder="Password" /><br />
+  <input id="objAddress" placeholder="Address" /><br />
+  <button onclick="createObject()">Create User</button>
   <pre id="out2"></pre>
 
-  <!-- Exercise 3 -->
-  <h2>Exercise 3 - Get user by ID</h2>
+  <h2>Exercise 3 - Get User by ID</h2>
   <input id="idSearch" placeholder="User ID" />
-  <button onclick="exercise3()">Search</button>
+  <button onclick="getObject()">Search User</button>
   <pre id="out3"></pre>
 
-  <!-- Exercise 4 -->
-  <h2>Exercise 4 - Update address</h2>
+  <h2>Exercise 4 - Update User Address</h2>
   <input id="idUpdate" placeholder="User ID" /><br />
-  <input id="newAddress" placeholder="New address" /><br />
-  <button onclick="exercise4()">Update</button>
+  <input id="newAddress" placeholder="New Address" /><br />
+  <button onclick="updateAddress()">Update Address</button>
   <pre id="out4"></pre>
 
-  <script>
-    // ── Exercise 1 ───────────────────────────────────────────
-    async function exercise1() {
-      const response = await axios.get("https://api.restful-api.dev/objects");
-      const objects = response.data;
-
-      const objectsWithData = objects.filter(
-        (obj) => obj.data !== null && obj.data !== undefined
-      );
-
-      const results = objectsWithData.map((obj) => {
-        const details = Object.entries(obj.data)
-          .map(([k, v]) => `${k}: ${v}`)
-          .join(", ");
-        return `${obj.name} (${details})`;
-      });
-
-      document.getElementById("out1").textContent = results.join("\n");
-    }
-
-    // ── Exercise 2 ───────────────────────────────────────────
-    async function exercise2() {
-      const name = document.getElementById("name").value;
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-      const address = document.getElementById("address").value;
-
-      const response = await axios.post("https://api.restful-api.dev/objects", {
-        name: name,
-        data: { email, password, address },
-      });
-
-      document.getElementById("out2").textContent = JSON.stringify(response.data, null, 2);
-    }
-
-    // ── Exercise 3 ───────────────────────────────────────────
-    async function exercise3() {
-      const id = document.getElementById("idSearch").value;
-
-      try {
-        const response = await axios.get(`https://api.restful-api.dev/objects/${id}`);
-        document.getElementById("out3").textContent = JSON.stringify(response.data, null, 2);
-      } catch (error) {
-        if (error.response && error.response.status === 404) {
-          document.getElementById("out3").textContent =
-            `Error 404: No user found with ID "${id}".`;
-        }
-      }
-    }
-
-    // ── Exercise 4 ───────────────────────────────────────────
-    async function exercise4() {
-      const id = document.getElementById("idUpdate").value;
-      const newAddress = document.getElementById("newAddress").value;
-
-      // GET first to retrieve current data and avoid losing other fields
-      const getResponse = await axios.get(`https://api.restful-api.dev/objects/${id}`);
-      const currentUser = getResponse.data;
-
-      // Merge current data with the new address
-      const updatedData = { ...currentUser.data, address: newAddress };
-
-      const response = await axios.patch(
-        `https://api.restful-api.dev/objects/${id}`,
-        { data: updatedData }
-      );
-
-      document.getElementById("out4").textContent = JSON.stringify(response.data, null, 2);
-    }
-  </script>
+  <script src="axios-ejercicio1.js"></script>
+  <script src="axios-ejercicio2.js"></script>
+  <script src="axios-ejercicio3.js"></script>
+  <script src="axios-ejercicio4.js"></script>
 </body>
 
 </html>

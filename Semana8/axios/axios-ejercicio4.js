@@ -1,41 +1,47 @@
-// ── EXERCISE 4 ───────────────────────────────────────────────────────────────
-// Create a function that updates a user's address, taking their ID and the
-// new address as parameters.
+// ── EXERCISE 4 AXIOS ─────────────────────────────────────────────────────────
+async function updateAddress(id, newData) {
+  const out = document.getElementById("out4");
 
-// 4a: The function receives the 2 required parameters: ID and new address
-async function updateAddress(id, newAddress) {
+  if (!id && !newData) {
+    id = document.getElementById("idUpdate")?.value.trim();
+    const newAddress = document.getElementById("newAddress")?.value.trim();
 
-  // 4b: First a GET is made to retrieve the user's current data.
-  //    This is necessary because the API replaces the entire `data` object on
-  //    PATCH, deleting any fields that are not sent.
-  const getResponse = await axios.get(`https://api.restful-api.dev/objects/${id}`);
-  const currentUser = getResponse.data;
-
-  // 4c: The current data is merged with the new address using spread (...).
-  //    This preserves email, password and any other existing fields.
-  const updatedData = {
-    ...currentUser.data,
-    address: newAddress,
-  };
-
-  // 4d: Using axios.patch() to the endpoint with the user's ID
-  //  4e: The body sends the full data object (not just the address) to avoid losing fields
-  const response = await axios.patch(
-    `https://api.restful-api.dev/objects/${id}`,
-    {
-      data: updatedData,
+    if (!id || !newAddress) {
+      if (out) out.textContent = "Error: Please fill in both fields.";
+      return null;
     }
-  );
 
-  // 4f: The response with the updated object comes in response.data
-  const updatedUser = response.data;
+    newData = { address: newAddress };
+  }
 
-  console.log("Address updated successfully:");
-  console.log(`  ID: ${updatedUser.id}`);
-  console.log(`  Name: ${updatedUser.name}`);
-  console.log(`  Data: ${JSON.stringify(updatedUser.data, null, 2)}`);
+  if (out) out.textContent = "Updating user data...";
 
-  return updatedUser;
+  try {
+    const getResponse = await axios.get(`https://api.restful-api.dev/objects/${id}`);
+    const currentObject = getResponse.data;
+    const updatedData = { ...currentObject.data, ...newData };
+
+    const patchResponse = await axios.patch(`https://api.restful-api.dev/objects/${id}`, {
+      data: updatedData,
+    });
+
+    const updated = patchResponse.data;
+    if (out) out.textContent = JSON.stringify(updated, null, 2);
+    console.log("Updated successfully:", updated);
+    return updated;
+  } catch (error) {
+    let message = "";
+
+    if (error.response?.status === 404) {
+      message = `Error 404: No user found with ID "${id}". Cannot update.`;
+    } else {
+      message = error.response
+        ? `Server error: ${error.response.status} ${error.response.statusText}`
+        : `Network error: ${error.message}`;
+    }
+
+    if (out) out.textContent = message;
+    console.log(message);
+    return null;
+  }
 }
-
-updateAddress("ID_HERE", "Cartago, Costa Rica");

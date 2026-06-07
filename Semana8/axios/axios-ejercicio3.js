@@ -1,33 +1,35 @@
 // ── EXERCISE 3 ───────────────────────────────────────────────────────────────
-// Create a function that returns a user by ID. If the user doesn't exist,
-// handle the 404 and return an error message.
+async function getObject() {
+  const out = document.getElementById("out3");
+  const id = document.getElementById("idSearch").value.trim();
 
-// 3a: The function receives the ID as a parameter
-async function getUser(id) {
+  if (!id) {
+    out.textContent = "Error: Please enter an ID.";
+    return;
+  }
+
+  out.textContent = "Searching...";
+
   try {
-    //  3b: Making a GET request to the /objects/{id} endpoint with axios
     const response = await axios.get(`https://api.restful-api.dev/objects/${id}`);
+    const object = response.data;
 
-    //  3c: If the user exists, return their information from response.data
-    const user = response.data;
-
-    console.log("User found:");
-    console.log(`  ID: ${user.id}`);
-    console.log(`  Name: ${user.name}`);
-    console.log(`  Data: ${JSON.stringify(user.data, null, 2)}`);
-
-    return user;
+    out.textContent = JSON.stringify(object, null, 2);
+    console.log("Object found:", object);
+    return object;
 
   } catch (error) {
-    //  3d: Axios automatically throws an error when the status is 404,
-    if (error.response && error.response.status === 404) {
-      const message = `Error 404: No user found with ID "${id}".`;
-      console.log(message);
-      return message;
+    let message = "";
+    
+    if (error.response?.status === 404) {
+      message = `Error 404: No object found with ID "${id}".`;
+    } else {
+      message = error.response
+        ? `Server error: ${error.response.status} ${error.response.statusText}`
+        : `Network error: ${error.message}`;
     }
 
-    throw error;
+    out.textContent = message;
+    console.log(message);
   }
 }
-
-getUser("non-existent-id");

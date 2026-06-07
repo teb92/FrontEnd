@@ -1,71 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Register</title>
-  </head>
-  <body>
-    <h1>Register</h1>
 
-    <input id="name" placeholder="Name" /><br />
-    <input id="email" placeholder="Email" /><br />
-    <input id="password" type="password" placeholder="Password" /><br />
-    <input id="address" placeholder="Address" /><br />
-    <button onclick="register()">Sign Up</button>
+<head>
+  <meta charset="UTF-8" />
+  <title>Register</title>
+</head>
 
-    <p id="error" style="color: red; display: none;"></p>
+<body>
+  <h1>Register</h1>
 
-    <script>
-      // If there is already an active session, go straight to the profile
-      if (localStorage.getItem("user")) {
+  <input id="name" placeholder="Name" /><br />
+  <input id="email" placeholder="Email" /><br />
+  <input id="password" type="password" placeholder="Password" /><br />
+  <input id="address" placeholder="Address" /><br />
+  <button onclick="register()">Sign Up</button>
+
+  <p id="error" style="color: red; display: none;"></p>
+
+  <script>
+    // If there is already an active session, go straight to the profile
+    if (localStorage.getItem("user")) {
+      window.location.href = "perfil.html";
+    }
+
+    async function register() {
+      const name = document.getElementById("name").value.trim();
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value.trim();
+      const address = document.getElementById("address").value.trim();
+      const errorEl = document.getElementById("error");
+
+      errorEl.style.display = "none";
+
+      if (!name || !email || !password || !address) {
+        errorEl.textContent = "Please fill in all fields.";
+        errorEl.style.display = "block";
+        return;
+      }
+
+      try {
+        // Exercise 2: POST to create the user
+        const response = await fetch("https://api.restful-api.dev/objects", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: name,
+            data: { email, password, address },
+          }),
+        });
+
+        if (!response.ok) throw new Error("Failed to create user.");
+
+        const user = await response.json();
+
+        // Save the session in localStorage so it persists on reload or close
+        localStorage.setItem("user", JSON.stringify(user));
+
+        // Show alert with the generated ID
+        alert(`User created successfully! Your ID is ${user.id}`);
+
+        // Redirect to profile
         window.location.href = "perfil.html";
+
+      } catch (error) {
+        errorEl.textContent = "An error occurred while creating the user. Please try again.";
+        errorEl.style.display = "block";
       }
+    }
+  </script>
+  <script src="nav.js"></script>
+</body>
 
-      async function register() {
-        const name = document.getElementById("name").value.trim();
-        const email = document.getElementById("email").value.trim();
-        const password = document.getElementById("password").value.trim();
-        const address = document.getElementById("address").value.trim();
-        const errorEl = document.getElementById("error");
-
-        errorEl.style.display = "none";
-
-        if (!name || !email || !password || !address) {
-          errorEl.textContent = "Please fill in all fields.";
-          errorEl.style.display = "block";
-          return;
-        }
-
-        try {
-          // Exercise 2: POST to create the user
-          const response = await fetch("https://api.restful-api.dev/objects", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              name: name,
-              data: { email, password, address },
-            }),
-          });
-
-          if (!response.ok) throw new Error("Failed to create user.");
-
-          const user = await response.json();
-
-          // Save the session in localStorage so it persists on reload or close
-          localStorage.setItem("user", JSON.stringify(user));
-
-          // Show alert with the generated ID
-          alert(`User created successfully! Your ID is ${user.id}`);
-
-          // Redirect to profile
-          window.location.href = "perfil.html";
-
-        } catch (error) {
-          errorEl.textContent = "An error occurred while creating the user. Please try again.";
-          errorEl.style.display = "block";
-        }
-      }
-    </script>
-    <script src="nav.js"></script>
-  </body>
 </html>

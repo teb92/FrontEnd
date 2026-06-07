@@ -1,36 +1,40 @@
 // ── EXERCISE 1 ───────────────────────────────────────────────────────────────
-// Create a function that lists all elements returned from a GET to the endpoint
-// https://api.restful-api.dev/objects. Filter out results that don't return
-// `data`, and format the ones that do in a readable way.
-
-//  1a: Function that makes a GET request to the /objects endpoint
 async function listObjects() {
-  const response = await fetch("https://api.restful-api.dev/objects");
-  const objects = await response.json();
+  const out = document.getElementById("out1");
+  out.textContent = "Loading...";
 
-  // 1b: Filter out all results that do NOT return `data`
-  //    Only objects where data exists and is not null pass the filter
-  const objectsWithData = objects.filter(
-    (obj) => obj.data !== null && obj.data !== undefined
-  );
+  try {
+    const response = await fetch("https://api.restful-api.dev/objects");
 
-  // 1c: Format the ones that DO have data in a readable way
-  //    Converts each object into a line like:
-  //    Apple iPhone 12 Pro Max (color: Cloudy White, capacity GB: 512)
-  const results = objectsWithData.map((obj) => {
-    const { name, data } = obj;
+    if (!response.ok) {
+      const serverError = `Server error: ${response.status} ${response.statusText}`;
+      out.textContent = serverError;
+      console.log(serverError);
+      return;
+    }
 
-    const details = Object.entries(data)
-      .map(([key, value]) => `${key}: ${value}`)
-      .join(", ");
+    const objects = await response.json();
 
-    return `${name} (${details})`;
-  });
+    const objectsWithData = objects.filter((obj) => {
+      if (obj.data === null || obj.data === undefined) return false;
+      if (typeof obj.data === "object" && Object.keys(obj.data).length === 0) return false;
+      return true;
+    });
 
-  // 1d: Display the formatted results on screen
-  results.forEach((line) => console.log(line));
+    const results = objectsWithData.map((obj) => {
+      const details = Object.entries(obj.data)
+        .map(([key, value]) => `${key}: ${value}`)
+        .join(", ");
+      return `${obj.name} (${details})`;
+    });
 
-  return results;
+    // Muestra el resultado en la interfaz DOM
+    out.textContent = results.length > 0 ? results.join("\n") : "No results with data found.";
+    results.forEach((line) => console.log(line));
+
+  } catch (error) {
+    const netError = `Network error: ${error.message}`;
+    out.textContent = netError;
+    console.log(netError);
+  }
 }
-
-listObjects();
