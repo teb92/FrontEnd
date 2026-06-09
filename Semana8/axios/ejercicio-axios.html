@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Axios Exercises (User Mode)</title>
+  <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+
+<body>
+  <h1>Axios Exercises - User Management</h1>
+
+  <h2>Exercise 1 - List Registered Users</h2>
+  <button onclick="listObjects()">Run GET</button>
+  <pre id="out1"></pre>
+
+  <h2>Exercise 2 - Create User Account</h2>
+  <input id="objName" placeholder="Full Name" /><br />
+  <input id="objEmail" placeholder="Email" /><br />
+  <input id="objPassword" type="password" placeholder="Password" /><br />
+  <input id="objAddress" placeholder="Address" /><br />
+  <button onclick="createObject()">Create User</button>
+  <pre id="out2"></pre>
+
+  <h2>Exercise 3 - Get User by ID</h2>
+  <input id="idSearch" placeholder="User ID" />
+  <button onclick="getObject()">Search User</button>
+  <pre id="out3"></pre>
+
+  <h2>Exercise 4 - Update User Address</h2>
+  <input id="idUpdate" placeholder="User ID" /><br />
+  <input id="newAddress" placeholder="New Address" /><br />
+  <button onclick="updateAddress()">Update Address</button>
+  <pre id="out4"></pre>
+
+  <script src="axios-ejercicio1.js"></script>
+  <script src="axios-ejercicio2.js"></script>
+  <script src="axios-ejercicio3.js"></script>
+  <script src="axios-ejercicio4.js"></script>
+</body>
+
+</html>

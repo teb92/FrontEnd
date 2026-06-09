@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <title>Fetch Exercises (User Mode)</title>
+</head>
+
+<body>
+  <h1>Fetch Exercises - User Management</h1>
+
+  <h2>Exercise 1 - List Registered Users</h2>
+  <button onclick="listObjects()">Run GET</button>
+  <pre id="out1"></pre>
+
+  <h2>Exercise 2 - Create User Account</h2>
+  <input id="objName" placeholder="Full Name" /><br />
+  <input id="objEmail" placeholder="Email" /><br />
+  <input id="objPassword" type="password" placeholder="Password" /><br />
+  <input id="objAddress" placeholder="Address" /><br />
+  <button onclick="createObject()">Create User</button>
+  <pre id="out2"></pre>
+
+  <h2>Exercise 3 - Get User by ID</h2>
+  <input id="idSearch" placeholder="User ID" />
+  <button onclick="getObject()">Search User</button>
+  <pre id="out3"></pre>
+
+  <h2>Exercise 4 - Update User Data</h2>
+  <input id="idUpdate" placeholder="Which user ID do you want to update?" /><br />
+  <button onclick="loadFieldsToUpdate()">Load Available Fields</button><br />
+
+  <select id="fieldName" disabled>
+    <option value="">Select a field to update</option>
+  </select><br />
+
+  <input id="fieldValue" placeholder="New value" disabled /><br />
+  <button id="updateButton" onclick="updateAddress()" disabled>Update User</button>
+  <pre id="out4"></pre>
+
+  <script src="fetch-ejercicio1.js"></script>
+  <script src="fetch-ejercicio2.js"></script>
+  <script src="fetch-ejercicio3.js"></script>
+  <script src="fetch-ejercicio4.js"></script>
+</body>
+
+</html>
