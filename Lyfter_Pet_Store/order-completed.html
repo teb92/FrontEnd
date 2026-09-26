@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Completed - PawStore</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+    <header class="navbar">
+        <div class="logo">🐾 PawStore</div>
+    </header>
+
+    <main class="main-container text-center">
+        <div class="card success-card">
+            <div class="check-icon">✓</div>
+            <h2>Order Placed Successfully</h2>
+            <p>Your order has been processed. You will receive a confirmation email with your purchase details.</p>
+
+            <div class="order-summary-box">
+                <h3>Order Summary</h3>
+                <div id="finished-order-details">
+                    <!-- Rendered via JS -->
+                </div>
+            </div>
+
+            <div class="button-group">
+                <a href="products.html" class="btn-primary">Back to Catalog</a>
+                <a href="index.html" class="btn-secondary">Go to Home</a>
+            </div>
+        </div>
+    </main>
+
+    <script type="module" src="js/order-completed.js"></script>
+</body>
+
+</html>

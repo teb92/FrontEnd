@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawStore - Administración</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!--  Protección de acceso -->
+    <script src="js/auth-guard.js"></script>
+</head>
+
+<body>
+
+    <main class="container">
+        <h1>Administración de productos</h1>
+        <p>En esta sección puedes gestionar el catálogo de productos de PawStore.</p>
+
+        <!-- CARD 1: Listado de Productos -->
+        <section class="card">
+            <h2>Listado de Productos</h2>
+            <table class="products-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th>Categoría</th>
+                        <th>Stock</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="products-table-body">
+                    <!-- Se llenará dinámicamente con JavaScript -->
+                </tbody>
+            </table>
+        </section>
+
+        <!--  CARD 2: Formulario para agregar producto -->
+        <section class="card">
+            <h2>Agregar nuevo producto</h2>
+            <form id="product-form">
+                <div class="form-group">
+                    <label for="name">Nombre</label>
+                    <input type="text" id="name" placeholder="Ej: Pelota de Juguete Resistente" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Descripción</label>
+                    <textarea id="description" placeholder="Una descripción detallada del producto..." rows="3"
+                        required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="price">Precio</label>
+                    <input type="number" id="price" step="0.01" placeholder="Ej: 19.99" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Categoría</label>
+                    <input type="text" id="category" placeholder="Ej: Juguetes" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="image">URL de la imagen</label>
+                    <input type="url" id="image" placeholder="Ej: https://example.com/imagen-pelota.jpg" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="stock">Stock</label>
+                    <input type="number" id="stock" placeholder="Ej: 50" required>
+                </div>
+
+                <button type="submit" class="btn-primary-full">Agregar producto</button>
+                <p id="form-message" class="form-message"></p>
+            </form>
+        </section>
+    </main>
+
+    <!-- Scripts de funcionalidad y maquetación -->
+    <script type="module">
+        import { renderLayout } from './js/layout.js';
+        renderLayout();
+    </script>
+    <script src="js/admin.js" type="module"></script>
+</body>
+
+</html>
