@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawStore - Carrito de Compras</title>
+    <link rel="stylesheet" href="css/carrito.css">
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <main class="cart-page-container">
+        <h2>Carrito de compras 🛒</h2>
+
+        <div class="cart-layout">
+            <!--  Columna Izquierda: Lista de productos -->
+            <section class="cart-items-column" id="cart-container">
+                <!-- Inyectado por js/carrito.js -->
+            </section>
+
+            <!--  Columna Derecha: Resumen de compra -->
+            <aside class="cart-summary-column">
+                <div class="summary-card">
+                    <div class="summary-row total-row">
+                        <span>Total:</span>
+                        <strong id="cart-total">₡0</strong>
+                    </div>
+                    <button id="checkout-btn" class="btn-checkout">Continuar al checkout ➡️</button>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- Inyección global del Header, Modal y Footer -->
+    <script type="module">
+        import { renderLayout } from './js/layout.js';
+        renderLayout();
+    </script>
+    <!-- Lógica del carrito -->
+    <script type="module" src="js/carrito.js"></script>
+</body>
+
+</html>
