@@ -1,5 +1,7 @@
 import { getCart, saveCart, getCartTotal } from './cart.js';
 import { updateCartBadge } from './layout.js';
+import { isLoggedIn } from './session.js';
+import { renderLoginRequired } from './ui.js';
 
 export function renderCartPage() {
   const container = document.getElementById('cart-container');
@@ -20,7 +22,6 @@ export function renderCartPage() {
   if (checkoutBtn) checkoutBtn.style.display = 'block';
 
   container.innerHTML = cart.map((item, index) => {
-    // 🛡️ Respaldos para datos e imagen
     const name = item.nombre || item.name || 'Producto';
     const price = Number(item.precio || item.price || 0);
     const qty = Number(item.cantidad || item.quantity || 1);
@@ -87,4 +88,10 @@ function addCartEvents() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', renderCartPage);
+document.addEventListener('DOMContentLoaded', () => {
+  if (!isLoggedIn()) {
+    renderLoginRequired(document.querySelector('main'));
+    return;
+  }
+  renderCartPage();
+});

@@ -7,7 +7,7 @@
     <title>PawStore - Administración</title>
     <link rel="stylesheet" href="css/styles.css">
 
-    <!--  Protección de acceso -->
+    <!-- Access protection -->
     <script src="js/auth-guard.js"></script>
 </head>
 
@@ -17,7 +17,7 @@
         <h1>Administración de productos</h1>
         <p>En esta sección puedes gestionar el catálogo de productos de PawStore.</p>
 
-        <!-- CARD 1: Listado de Productos -->
+        <!-- CARD 1: Product list -->
         <section class="card">
             <h2>Listado de Productos</h2>
             <table class="products-table">
@@ -32,12 +32,41 @@
                     </tr>
                 </thead>
                 <tbody id="products-table-body">
-                    <!-- Se llenará dinámicamente con JavaScript -->
+                    <!-- Filled dynamically by js/admin.js -->
                 </tbody>
             </table>
         </section>
 
-        <!--  CARD 2: Formulario para agregar producto -->
+        <!-- CARD 2: Completed sales -->
+        <section class="card">
+            <div class="card-header">
+                <h2>Ventas realizadas</h2>
+                <button type="button" id="refresh-sales-btn" class="btn-secondary">Actualizar</button>
+            </div>
+
+            <!-- Shown only when the sales come from this browser instead of the API -->
+            <p id="sales-notice" class="sales-notice" hidden></p>
+            <p id="sales-summary" class="sales-summary" aria-live="polite"></p>
+
+            <div class="table-scroll">
+                <table class="products-table sales-table">
+                    <thead>
+                        <tr>
+                            <th>Orden</th>
+                            <th>Fecha</th>
+                            <th>Cliente</th>
+                            <th>Productos</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <!-- Filled by js/admin.js -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- CARD 3: Add product form -->
         <section class="card">
             <h2>Agregar nuevo producto</h2>
             <form id="product-form">
@@ -59,7 +88,8 @@
 
                 <div class="form-group">
                     <label for="category">Categoría</label>
-                    <input type="text" id="category" placeholder="Ej: Juguetes" required>
+                    <input type="text" id="category" list="category-options" placeholder="Ej: Juguetes" required>
+                    <datalist id="category-options"></datalist>
                 </div>
 
                 <div class="form-group">
@@ -78,11 +108,7 @@
         </section>
     </main>
 
-    <!-- Scripts de funcionalidad y maquetación -->
-    <script type="module">
-        import { renderLayout } from './js/layout.js';
-        renderLayout();
-    </script>
+    <!-- Header and footer are injected by js/admin.js (through js/layout.js) -->
     <script src="js/admin.js" type="module"></script>
 </body>
 

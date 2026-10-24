@@ -1,6 +1,12 @@
-// 📄 Ubicación: js/index.js
 import { renderLayout } from './layout.js';
+import { isLoggedIn } from './session.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-  renderLayout(); // 🧭 Inyecta Header y Footer dinámicos
+  renderLayout();
+
+  if (isLoggedIn()) {
+    document.querySelectorAll('[data-guest-only]').forEach((element) => {
+      element.hidden = true;
+    });
+  }
 });

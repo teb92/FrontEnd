@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawStore - Contacto</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- Header and footer are injected by js/layout.js -->
+    <main class="contact-page">
+        <h1>Contacto</h1>
+        <p class="contact-intro">¿Tienes dudas sobre un producto o tu pedido? Escríbenos y te responderemos pronto.</p>
+
+        <form id="contact-form" novalidate>
+            <div class="form-group">
+                <label for="contact-name">Nombre completo</label>
+                <input type="text" id="contact-name" placeholder="Introduce tu nombre completo" autocomplete="name">
+            </div>
+
+            <div class="form-group">
+                <label for="contact-email">Correo electrónico</label>
+                <input type="email" id="contact-email" placeholder="ejemplo@dominio.com" autocomplete="email">
+            </div>
+
+            <div class="form-group">
+                <label for="contact-message">Mensaje</label>
+                <textarea id="contact-message" rows="5" placeholder="Cuéntanos en qué podemos ayudarte"></textarea>
+            </div>
+
+            <button type="submit" class="btn-primary-full">Enviar mensaje</button>
+        </form>
+    </main>
+
+    <script type="module" src="js/contact.js"></script>
+</body>
+
+</html>

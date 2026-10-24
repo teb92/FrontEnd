@@ -1,50 +1,52 @@
-document.getElementById('login-form').addEventListener('submit', (e) => {
-  e.preventDefault(); //  Detiene la recarga automática de la página
+import { loginUser } from './services/api.js';
+import { renderLayout } from './layout.js';
+import { prepareForm, applyFieldErrors, showFormMessage, clearFormMessage } from './ui.js';
+import { validateEmail, validatePasswordRequired } from './validators.js';
 
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value.trim();
-  const errorMsg = document.getElementById('error-msg');
+const loginForm = document.getElementById('login-form');
 
-  // Ocultamos cualquier mensaje de error previo
-  if (errorMsg) {
-    errorMsg.style.display = 'none';
+renderLayout(); // shared header + footer (it used to be an inline script in login.html)
+
+if (loginForm) {
+  prepareForm(loginForm);
+
+  // forgot-password.js sends the user here with ?reset=1 after the password was changed
+  if (new URLSearchParams(window.location.search).get('reset') === '1') {
+    showFormMessage(loginForm, 'Contraseña actualizada. Inicia sesión con tu nueva contraseña.', 'success');
+    window.history.replaceState({}, '', window.location.pathname); // so a refresh does not repeat the message
   }
 
-  //  Paso 1: Verificación del Administrador
-  if (email === 'admin@pawstore.com' && password === 'admin123') {
-    const adminUser = { nombre: 'Administrador', email, rol: 'admin' };
-    localStorage.setItem('currentUser', JSON.stringify(adminUser));
-    
-    // Redirige directamente al panel de administración
-    window.location.href = 'admin.html';
-    return;
-  }
+  loginForm.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    clearFormMessage(loginForm);
 
-  //  Paso 2: Verificación de Clientes Registrados
-  const registeredUsers = JSON.parse(localStorage.getItem('users')) || [];
-  
-  //  Diagnóstico en consola para verificar los datos guardados
-  console.log('Usuarios en localStorage:', registeredUsers);
-  console.log('Intentando ingresar con:', { email, password });
+    const email = document.getElementById('email').value.trim();
+    const password = document.getElementById('password').value;
 
-  const clientFound = registeredUsers.find(
-    user => user.email === email && user.password === password
-  );
+    const isValid = applyFieldErrors(loginForm, {
+      email: validateEmail(email),
+      password: validatePasswordRequired(password)
+    });
+    if (!isValid) return;
 
-  if (clientFound) {
-    const clientUser = { 
-      nombre: clientFound.nombre || 'Cliente', 
-      email: clientFound.email, 
-      rol: 'cliente' 
-    };
-    localStorage.setItem('currentUser', JSON.stringify(clientUser));
-    
-    //  Redirige al inicio para clientes
-    window.location.href = 'index.html';
-  } else {
-    //  Paso 3: Mostrar mensaje de error si los datos no coinciden
-    if (errorMsg) {
-      errorMsg.style.display = 'block';
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    submitButton.disabled = true;
+
+    try {
+      const data = await loginUser(email, password);
+
+      const userData = data.user || {
+        nombre: email.split('@')[0],
+        email,
+        role: data.role || (email === 'admin@pawstore.com' ? 'admin' : 'user')
+      };
+      localStorage.setItem('currentUser', JSON.stringify(userData));
+
+      const isAdmin = userData.email === 'admin@pawstore.com' || userData.role === 'admin';
+      window.location.href = isAdmin ? 'admin.html' : 'index.html';
+    } catch (error) {
+      showFormMessage(loginForm, error.message);
+      submitButton.disabled = false;
     }
-  }
-});
+  });
+}

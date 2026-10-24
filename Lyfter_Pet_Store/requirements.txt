@@ -1,0 +1,4 @@
+# Python packages needed by app.py (versions the project was tested with: Flask 3.1, Flask-Cors 6.0, Flask-SQLAlchemy 3.1)
+Flask>=3.0
+Flask-Cors>=4.0
+Flask-SQLAlchemy>=3.1

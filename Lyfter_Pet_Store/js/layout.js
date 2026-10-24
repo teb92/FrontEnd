@@ -1,34 +1,37 @@
-import { getCart, getCartTotal, saveCart } from './cart.js';
+import { getCart, getCartTotal } from './cart.js';
+
+function countCartItems() {
+  return getCart().reduce((acc, item) => acc + (item.cantidad || item.quantity || 1), 0);
+}
 
 export function renderLayout() {
-  // Leer usuario activo desde localStorage
   const currentUser = JSON.parse(localStorage.getItem('currentUser'));
 
-  // Leer cantidad de ítems en el carrito para mostrar el contador
-  const cart = getCart();
-  const totalItems = cart.reduce((acc, item) => acc + (item.cantidad || item.quantity || 1), 0);
+  const totalItems = countCartItems();
 
-  //  Eliminar header y modal anteriores si ya existían para evitar duplicaciones
-  const existingHeader = document.querySelector('.main-header');
-  if (existingHeader) existingHeader.remove();
-  
-  const existingModal = document.getElementById('cart-modal');
-  if (existingModal) existingModal.remove();
+  document.querySelector('.main-header')?.remove();
+  document.getElementById('cart-modal')?.remove();
+  document.querySelector('.main-footer')?.remove();
 
-  // Construcción de la barra de navegación y la estructura del Modal flotante
+  const isAdmin =
+    currentUser &&
+    (currentUser.rol === 'admin' ||
+      currentUser.role === 'admin' ||
+      currentUser.email === 'admin@pawstore.com');
+
   const headerHTML = `
     <header class="main-header">
       <div class="logo">
         <a href="index.html">🐾 PawStore</a>
       </div>
-      <nav class="nav-links">
+      <nav class="nav-links" aria-label="Navegación principal">
         <a href="index.html">Inicio</a>
-        <a href="productos.html">Productos</a>
-        <a href="contacto.html">Contacto</a>
-        ${currentUser && currentUser.rol === 'admin' ? '<a href="admin.html">Administración</a>' : ''}
-        <a href="carrito.html" class="cart-link">🛒 (${totalItems})</a>
+        <a href="products.html">Productos</a>
+        <a href="contact.html">Contacto</a>
+        ${isAdmin ? '<a href="admin.html">Administración</a>' : ''}
+        <a href="cart.html" class="cart-link">🛒 (${totalItems})</a>
         ${currentUser ? `
-          <span class="user-tag">Usuario: ${currentUser.nombre || 'admin'}</span>
+          <span class="user-tag">Usuario: ${currentUser.nombre || currentUser.email || 'admin'}</span>
           <button id="logout-btn" class="btn-logout">Cerrar sesión</button>
         ` : `
           <a href="login.html" class="btn-primary">Iniciar sesión</a>
@@ -36,31 +39,43 @@ export function renderLayout() {
       </nav>
     </header>
 
-    <!-- 🪟 Ventana Flotante (Modal) del Carrito -->
+    <!-- Floating cart modal -->
     <div id="cart-modal" class="modal-overlay" style="display: none;">
-      <div class="modal-content">
+      <div class="modal-content" role="dialog" aria-modal="true" aria-labelledby="cart-modal-title">
         <div class="modal-header">
-          <h2>Resumen del Carrito 🛒</h2>
-          <button id="close-modal-btn" class="close-btn">&times;</button>
+          <h2 id="cart-modal-title">Resumen del Carrito 🛒</h2>
+          <button id="close-modal-btn" class="close-btn" aria-label="Cerrar resumen del carrito">&times;</button>
         </div>
         <div id="modal-cart-items" class="modal-body">
-          <!-- Inyectado dinámicamente -->
+          <!-- Filled dynamically by openCartModal() -->
         </div>
         <div class="modal-footer">
           <div class="modal-total">
             <span>Total:</span>
             <strong id="modal-cart-total">₡0</strong>
           </div>
-          <a href="carrito.html" class="btn-primary">Ver carrito completo ➡️</a>
+          <a href="cart.html" class="btn-primary">Ver carrito completo ➡️</a>
         </div>
       </div>
     </div>
   `;
 
-  //  Insertar el header y el modal al inicio del <body>
-  document.body.insertAdjacentHTML('afterbegin', headerHTML);
+  const footerHTML = `
+    <footer class="main-footer">
+      <p>&copy; ${new Date().getFullYear()} PawStore — Todos los derechos reservados.</p>
+    </footer>
+  `;
 
-  // Evento para cerrar la sesión activa
+  document.body.insertAdjacentHTML('afterbegin', headerHTML);
+  document.body.insertAdjacentHTML('beforeend', footerHTML);
+
+  const currentPage = window.location.pathname.split('/').pop() || 'index.html';
+  document.querySelectorAll('.nav-links a').forEach((link) => {
+    if (link.getAttribute('href') === currentPage) {
+      link.setAttribute('aria-current', 'page');
+    }
+  });
+
   const logoutBtn = document.getElementById('logout-btn');
   if (logoutBtn) {
     logoutBtn.addEventListener('click', () => {
@@ -69,24 +84,21 @@ export function renderLayout() {
     });
   }
 
-  // Evento para abrir el modal flotante al hacer clic en el carrito
   const cartLink = document.querySelector('.cart-link');
   if (cartLink) {
     cartLink.addEventListener('click', (e) => {
-      e.preventDefault(); //  Evita ir directo a carrito.html
+      e.preventDefault();
       openCartModal();
     });
   }
 
-  //  Evento para cerrar el modal
   const closeModalBtn = document.getElementById('close-modal-btn');
   const cartModal = document.getElementById('cart-modal');
   if (closeModalBtn && cartModal) {
     closeModalBtn.addEventListener('click', () => {
       cartModal.style.display = 'none';
     });
-    
-    // Cerrar también si hace clic fuera del recuadro
+
     cartModal.addEventListener('click', (e) => {
       if (e.target === cartModal) {
         cartModal.style.display = 'none';
@@ -95,7 +107,6 @@ export function renderLayout() {
   }
 }
 
-//  Función para abrir y renderizar el contenido del Modal Flotante
 export function openCartModal() {
   const modal = document.getElementById('cart-modal');
   const container = document.getElementById('modal-cart-items');
@@ -129,16 +140,12 @@ export function openCartModal() {
     totalElement.textContent = `₡${getCartTotal().toLocaleString('es-CR')}`;
   }
 
-  modal.style.display = 'flex'; // 👁️ Hace visible el modal
+  modal.style.display = 'flex';
 }
 
-// Función para actualizar únicamente el número del carrito en el header
 export function updateCartBadge() {
-  const cart = getCart();
-  const totalItems = cart.reduce((acc, item) => acc + (item.cantidad || item.quantity || 1), 0);
-  
   const cartLink = document.querySelector('.cart-link');
   if (cartLink) {
-    cartLink.textContent = `🛒 (${totalItems})`;
+    cartLink.textContent = `🛒 (${countCartItems()})`;
   }
 }

@@ -1,65 +1,83 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Summary - PawStore</title>
+    <title>Resumen de Compra - Lyfter Pet Store</title>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body>
-    <header class="navbar">
-        <div class="logo">🐾 PawStore</div>
-        <nav>
-            <a href="index.html">Home</a>
-            <a href="products.html">Products</a>
-            <a href="contact.html">Contact</a>
-        </nav>
-    </header>
 
-    <main class="main-container">
-        <h2>Order Summary</h2>
+    <!-- Order processing screen (hidden by default) -->
+    <div id="loading-overlay">
+        <div class="spinner"></div>
+        <h2>Procesando tu pago con el banco...</h2>
+        <p>Por favor, no cierres esta ventana.</p>
+    </div>
 
-        <div class="checkout-grid">
-            <!-- Left Column: Shipping Form -->
-            <section class="card">
-                <h3>Shipping Information</h3>
+    <main class="checkout-page">
+        <h1>Resumen de tu Pedido 🐾</h1>
+
+        <div class="summary-grid">
+
+            <!-- Product list -->
+            <div>
+                <h2>Tus Productos</h2>
+                <div id="order-items-list" class="order-items-list"></div>
+                <div class="order-total">
+                    Total a Pagar: <span id="order-total">₡0</span>
+                </div>
+            </div>
+
+            <!-- Shipping and payment form -->
+            <div>
+                <h2>Datos de Envío y Pago</h2>
                 <form id="checkout-form">
                     <div class="form-group">
-                        <label for="fullName">Full Name</label>
-                        <input type="text" id="fullName" required placeholder="e.g. Jane Doe">
+                        <label for="fullName">Nombre Completo</label>
+                        <input type="text" id="fullName" required>
                     </div>
                     <div class="form-group">
-                        <label for="email">Email Address</label>
-                        <input type="email" id="email" required placeholder="jane.doe@example.com">
+                        <label for="email">Correo Electrónico</label>
+                        <input type="email" id="email" required>
                     </div>
                     <div class="form-group">
-                        <label for="address">Shipping Address</label>
-                        <input type="text" id="address" required placeholder="123 Main Street, City">
+                        <label for="address">Dirección de Entrega</label>
+                        <input type="text" id="address" placeholder="Ej: San José, Costa Rica" required>
                     </div>
                     <div class="form-group">
-                        <label for="phone">Phone Number</label>
-                        <input type="tel" id="phone" required placeholder="+1 555-123-4567">
+                        <label for="phone">Teléfono</label>
+                        <input type="text" id="phone" placeholder="Ej: 8888-8888" required>
                     </div>
-                    <small class="help-text">This information will be used to coordinate delivery.</small>
-                </form>
-            </section>
 
-            <!-- Right Column: Order Breakdown -->
-            <section class="card">
-                <h3>Order Summary</h3>
-                <div id="order-items-list" class="items-list">
-                    <!-- Dynamically populated via JS -->
-                </div>
-                <hr>
-                <div class="total-row">
-                    <span>Total:</span>
-                    <strong id="order-total">₡0</strong>
-                </div>
-                <button type="submit" form="checkout-form" class="btn-primary full-width">Confirm Purchase</button>
-                <a href="cart.html" class="btn-link">Cancel</a>
-            </section>
+                    <!-- Fake card details -->
+                    <div class="payment-section">
+                        <h3>Información de Tarjeta (Ficticia)</h3>
+                        <div class="form-group">
+                            <label for="cardNumber">Número de Tarjeta</label>
+                            <input type="text" id="cardNumber" placeholder="4000 1234 5678 9010" maxlength="19"
+                                required>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="cardExpiry">Expiración</label>
+                                <input type="text" id="cardExpiry" placeholder="MM/AA" maxlength="5" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="cardCvv">CVV</label>
+                                <input type="password" id="cardCvv" placeholder="123" maxlength="4" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-pay">
+                        Pagar y Finalizar Compra
+                    </button>
+                </form>
+            </div>
+
         </div>
     </main>
 

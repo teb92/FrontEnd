@@ -10,12 +10,19 @@
 
 <body>
 
-    <!--  Contenido principal de la página de Inicio -->
+    <!-- Header and footer are injected by js/layout.js -->
     <main class="home-container">
-        <section class="hero">
-            <h1>Bienvenido a PawStore 🐾</h1>
-            <p>Todo lo que tu mascota necesita en un solo lugar.</p>
-            <a href="productos.html" class="btn-primary">Ver Catálogo</a>
+        <section class="hero" aria-labelledby="hero-title">
+            <h1 id="hero-title">Bienvenido a PawStore 🐾</h1>
+            <p>Tu destino online para encontrar los mejores productos para tus queridas mascotas:
+                desde alimentos y juguetes hasta accesorios y salud.</p>
+
+            <div class="hero-actions">
+                <a href="products.html" class="btn-primary">Ver productos</a>
+                <!-- Only for visitors without a session (js/index.js hides them when there is one) -->
+                <a href="login.html" class="btn-secondary" data-guest-only>Iniciar sesión</a>
+                <a href="register.html" class="btn-outline" data-guest-only>Crear cuenta</a>
+            </div>
         </section>
     </main>
 

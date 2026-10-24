@@ -1,14 +1,16 @@
-// 1. Obtener los productos guardados en localStorage
 export function getCart() {
-  return JSON.parse(localStorage.getItem('cart')) || [];
+  try {
+    const cart = JSON.parse(localStorage.getItem('cart'));
+    return Array.isArray(cart) ? cart : [];
+  } catch {
+    return [];
+  }
 }
 
-// 2. Guardar el estado actualizado del carrito
 export function saveCart(cart) {
   localStorage.setItem('cart', JSON.stringify(cart));
 }
 
-// 3. Agregar un producto al carrito
 export function addToCart(product, quantity = 1) {
   const cart = getCart();
   const existingItem = cart.find(item => String(item.id) === String(product.id));
@@ -28,7 +30,16 @@ export function addToCart(product, quantity = 1) {
   saveCart(cart);
 }
 
-// 4. Actualizar la cantidad de un producto específico
+export function getCartQuantity(productId) {
+  const item = getCart().find(i => String(i.id) === String(productId));
+  return item ? Number(item.cantidad || item.quantity || 0) : 0;
+}
+
+export function hasStockFor(product, quantity = 1) {
+  if (product.stock === undefined || product.stock === null) return true;
+  return getCartQuantity(product.id) + Number(quantity) <= Number(product.stock);
+}
+
 export function updateQuantity(productId, newQuantity) {
   const cart = getCart();
   const item = cart.find(i => String(i.id) === String(productId));
@@ -43,31 +54,24 @@ export function updateQuantity(productId, newQuantity) {
   }
 }
 
-// 5. Eliminar un producto del carrito
 export function removeFromCart(productId) {
-  let cart = getCart();
-  cart = cart.filter(i => String(i.id) !== String(productId));
+  const cart = getCart().filter(i => String(i.id) !== String(productId));
   saveCart(cart);
 }
 
-// 🧹 6. Vaciar el carrito por completo
 export function clearCart() {
   localStorage.removeItem('cart');
 }
 
-// 7. Total de unidades para la barra de navegación (layout.js)
 export function getCartCount() {
-  const cart = getCart();
-  return cart.reduce((total, item) => {
+  return getCart().reduce((total, item) => {
     const qty = Number(item.cantidad || item.quantity || 1);
     return total + qty;
   }, 0);
 }
 
-// 8. Suma total del monto para la barra de navegación (layout.js)
 export function getCartTotal() {
-  const cart = getCart();
-  return cart.reduce((total, item) => {
+  return getCart().reduce((total, item) => {
     const price = Number(item.precio || item.price || 0);
     const qty = Number(item.cantidad || item.quantity || 1);
     return total + (price * qty);

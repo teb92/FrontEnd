@@ -1,6 +1,6 @@
-/*  Estructura principal en 2 columnas */
+
 .cart-page-container {
-  max-width: 1100px;
+  max-width: 68.75rem;
   margin: 2rem auto;
   padding: 0 1rem;
 }
@@ -12,31 +12,31 @@
   margin-top: 1.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48em) {
   .cart-layout {
     grid-template-columns: 2fr 1fr;
     align-items: start;
   }
 }
 
-/*  Tarjeta de producto individual */
+
 .cart-card {
   display: flex;
   align-items: center;
   gap: 1.5rem;
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 0.0625rem solid #e2e8f0;
+  border-radius: 0.75rem;
   padding: 1.25rem;
   margin-bottom: 1rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.04);
 }
 
 .cart-card img {
-  width: 80px;
-  height: 80px;
+  width: 5rem;
+  height: 5rem;
   object-fit: cover;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   background-color: #f7fafc;
 }
 
@@ -56,7 +56,7 @@
   font-size: 0.95rem;
 }
 
-/* Controles de cantidad */
+
 .cart-card-controls {
   display: flex;
   align-items: center;
@@ -65,33 +65,33 @@
 }
 
 .btn-qty {
-  width: 28px;
-  height: 28px;
-  border: 1px solid #cbd5e0;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 0.0625rem solid #cbd5e0;
   background: #edf2f7;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   cursor: pointer;
   font-weight: bold;
 }
 
-/* Botón Eliminar */
+
 .btn-delete {
   background-color: #e53e3e;
   color: white;
   border: none;
   padding: 0.5rem 0.8rem;
-  border-radius: 6px;
+  border-radius: 0.375rem;
   cursor: pointer;
   font-size: 0.85rem;
 }
 
-/*  Tarjeta de Resumen */
+
 .summary-card {
   background-color: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 12px;
+  border: 0.0625rem solid #e2e8f0;
+  border-radius: 0.75rem;
   padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.04);
 }
 
 .summary-row {
@@ -109,7 +109,7 @@
   color: white;
   border: none;
   padding: 0.9rem;
-  border-radius: 8px;
+  border-radius: 0.5rem;
   font-weight: bold;
   font-size: 1rem;
   cursor: pointer;
