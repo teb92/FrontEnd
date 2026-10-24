@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawStore - Editar producto</title>
+    <link rel="stylesheet" href="css/styles.css">
+
+    <!-- Only administrators can open this page -->
+    <script src="js/auth-guard.js"></script>
+</head>
+
+<body>
+
+    <!-- Header and footer are injected by js/layout.js. The form is filled by js/edit-product.js -->
+    <main class="edit-page">
+        <h1>Editar producto</h1>
+
+        <!-- Loading and error states -->
+        <div id="edit-status" aria-live="polite"></div>
+
+        <form id="edit-product-form" class="edit-card" novalidate hidden>
+            <div class="form-group">
+                <label for="name">Nombre</label>
+                <input type="text" id="name" required>
+            </div>
+
+            <div class="form-group">
+                <label for="description">Descripción</label>
+                <textarea id="description" rows="4" required></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="price">Precio</label>
+                <input type="number" id="price" step="0.01" min="0" required>
+            </div>
+
+            <div class="form-group">
+                <label for="category">Categoría</label>
+                <input type="text" id="category" list="category-options" required>
+                <datalist id="category-options"></datalist>
+            </div>
+
+            <div class="form-group">
+                <label for="image">URL de la imagen</label>
+                <input type="url" id="image" required>
+            </div>
+
+            <div class="form-group">
+                <label for="stock">Stock</label>
+                <input type="number" id="stock" step="1" min="0" required>
+            </div>
+
+            <div class="form-actions">
+                <a href="admin.html" class="btn-secondary">Cancelar</a>
+                <button type="submit" class="btn-primary">Guardar cambios</button>
+            </div>
+        </form>
+    </main>
+
+    <script type="module" src="js/edit-product.js"></script>
+</body>
+
+</html>

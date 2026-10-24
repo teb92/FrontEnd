@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PawStore - Productos</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+  <!-- Main catalog content (header and footer are injected by js/layout.js) -->
+  <main class="catalog-container">
+    <h1>Catálogo de productos</h1>
+
+    <!-- Search bar and filters -->
+    <section class="filters-section" aria-label="Filtros del catálogo">
+      <label for="search-input" class="visually-hidden">Buscar producto</label>
+      <input type="search" id="search-input" placeholder="🔍 Buscar producto...">
+      <label>
+        <input type="checkbox" id="filter-available"> Mostrar solo disponibles
+      </label>
+    </section>
+
+    <!-- Result counter (announced to screen readers when it changes) -->
+    <p id="results-count" class="results-count" aria-live="polite"></p>
+
+    <!-- Product grid -->
+    <section class="product-grid" id="product-grid" aria-label="Lista de productos"></section>
+  </main>
+
+  <script type="module" src="js/main.js"></script>
+</body>
+
+</html>

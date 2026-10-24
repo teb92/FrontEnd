@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PawStore - Inicio</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+
+<body>
+
+    <!-- Header and footer are injected by js/layout.js -->
+    <main class="home-container">
+        <section class="hero" aria-labelledby="hero-title">
+            <h1 id="hero-title">Bienvenido a PawStore 🐾</h1>
+            <p>Tu destino online para encontrar los mejores productos para tus queridas mascotas:
+                desde alimentos y juguetes hasta accesorios y salud.</p>
+
+            <div class="hero-actions">
+                <a href="products.html" class="btn-primary">Ver productos</a>
+                <!-- Only for visitors without a session (js/index.js hides them when there is one) -->
+                <a href="login.html" class="btn-secondary" data-guest-only>Iniciar sesión</a>
+                <a href="register.html" class="btn-outline" data-guest-only>Crear cuenta</a>
+            </div>
+        </section>
+    </main>
+
+    <script type="module" src="js/index.js"></script>
+</body>
+
+</html>

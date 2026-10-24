@@ -1,0 +1,28 @@
+# ---------- macOS ----------
+.DS_Store
+__MACOSX/
+._*
+
+# ---------- Editors / IDEs ----------
+.vscode/
+.idea/
+*.swp
+
+# ---------- Python / Flask backend ----------
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.env
+
+# Local database: it holds users (password hashes), customer data and orders. Never commit it.
+# It is created by the backend on first run (see README.md).
+instance/
+*.db
+*.sqlite3
+
+# ---------- Node (not used today; kept in case tooling is added) ----------
+node_modules/
+
+# ---------- Logs ----------
+*.log
