@@ -2,16 +2,11 @@ import { getProducts, updateProduct } from './services/api.js';
 import { renderLayout } from './layout.js';
 import { prepareForm, applyFieldErrors, showFormMessage, clearFormMessage, renderErrorState } from './ui.js';
 import { validateProductForm, readProductForm, fillProductForm, fillCategoryOptions } from './product-form.js';
-import { createElement } from './utils.js';
+import { createElement, getProductIdFromUrl } from './utils.js';
 
 const status = document.getElementById('edit-status');
 const form = document.getElementById('edit-product-form');
 const saveButton = form.querySelector('button[type="submit"]');
-
-function getProductIdFromUrl() {
-  const id = new URLSearchParams(window.location.search).get('id');
-  return /^\d+$/.test(id ?? '') ? id : null;
-}
 
 function showError(message, retry) {
   form.hidden = true;
@@ -40,7 +35,7 @@ async function loadProduct(productId) {
 
     fillCategoryOptions(document.getElementById('category-options'), products);
     fillProductForm(form, product);
-    document.title = `Editar ${product.nombre} - PawStore`;
+    document.title = `Editar ${product.name} - PawStore`;
 
     status.innerHTML = '';
     form.hidden = false;

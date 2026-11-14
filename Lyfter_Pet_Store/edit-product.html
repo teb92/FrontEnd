@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="auth-pending">
 
 <head>
     <meta charset="UTF-8">
@@ -7,17 +7,14 @@
     <title>PawStore - Editar producto</title>
     <link rel="stylesheet" href="css/styles.css">
 
-    <!-- Only administrators can open this page -->
-    <script src="js/auth-guard.js"></script>
+    <script type="module" src="js/auth-guard.js"></script>
 </head>
 
 <body>
 
-    <!-- Header and footer are injected by js/layout.js. The form is filled by js/edit-product.js -->
     <main class="edit-page">
         <h1>Editar producto</h1>
 
-        <!-- Loading and error states -->
         <div id="edit-status" aria-live="polite"></div>
 
         <form id="edit-product-form" class="edit-card" novalidate hidden>

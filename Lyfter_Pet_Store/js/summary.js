@@ -1,8 +1,9 @@
-import { getCart } from './cart.js';
+import { getCart, getCartTotal, clearCart } from './cart.js';
+import { refreshCart } from './cart-sync.js';
+import { createElement, formatColones } from './utils.js';
 import { createOrder } from './services/api.js';
-import { renderLayout } from './layout.js';
+import { renderLayout, updateCartBadge } from './layout.js';
 import { attachInputMask, formatCardNumber, formatExpiry, formatCvv } from './input-masks.js';
-import { buildSale, recordSale } from './sales.js';
 import { getCurrentUser } from './session.js';
 import {
   prepareForm,
@@ -23,12 +24,18 @@ import {
 
 const currentUser = getCurrentUser();
 
-function calculateTotal(cart) {
-  return cart.reduce((acc, item) => {
-    const price = Number(item.precio || item.price || 0);
-    const qty = Number(item.cantidad || item.quantity || 1);
-    return acc + (price * qty);
-  }, 0);
+function createSummaryItem(item) {
+  const { name, price, quantity } = item;
+
+  const title = createElement('p');
+  title.appendChild(createElement('strong', '', name));
+
+  const details = createElement('div');
+  details.append(title, createElement('small', '', `${quantity} x ${formatColones(price)}`));
+
+  const row = createElement('div', 'summary-item');
+  row.append(details, createElement('div', '', formatColones(price * quantity)));
+  return row;
 }
 
 function renderOrderSummary() {
@@ -41,25 +48,9 @@ function renderOrderSummary() {
     return;
   }
 
-  itemsContainer.innerHTML = '';
-  cart.forEach(item => {
-    const qty = Number(item.cantidad || item.quantity || 1);
-    const price = Number(item.precio || item.price || 0);
-    const name = item.nombre || item.name || 'Producto';
+  itemsContainer.replaceChildren(...cart.map(createSummaryItem));
 
-    const itemElement = document.createElement('div');
-    itemElement.className = 'summary-item';
-    itemElement.innerHTML = `
-      <div>
-        <p><strong>${name}</strong></p>
-        <small>${qty} x ₡${price.toLocaleString('es-CR')}</small>
-      </div>
-      <div>₡${(price * qty).toLocaleString('es-CR')}</div>
-    `;
-    itemsContainer.appendChild(itemElement);
-  });
-
-  totalElement.textContent = `₡${calculateTotal(cart).toLocaleString('es-CR')}`;
+  totalElement.textContent = formatColones(getCartTotal());
 }
 
 function validateCheckoutForm(form) {
@@ -76,7 +67,7 @@ function validateCheckoutForm(form) {
   };
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
   renderLayout();
 
   if (!currentUser) {
@@ -86,9 +77,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   const nameInput = document.getElementById('fullName');
   const emailInput = document.getElementById('email');
-  if (currentUser.nombre) nameInput.value = currentUser.nombre;
+  if (currentUser.name) nameInput.value = currentUser.name;
   if (currentUser.email) emailInput.value = currentUser.email;
 
+  await refreshCart();
+  updateCartBadge();
   renderOrderSummary();
 
   attachInputMask(document.getElementById('cardNumber'), formatCardNumber, {
@@ -124,47 +117,23 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
 
-    const itemsToSend = cart.map(item => ({
-      id: item.id,
-      cantidad: Number(item.cantidad || item.quantity || 1)
-    }));
+    const itemsToSend = cart.map(item => ({ id: item.id, quantity: item.quantity }));
 
     loadingOverlay.style.display = 'flex';
 
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-
       const customer = {
-        nombre: nameInput.value.trim(),
+        name: nameInput.value.trim(),
         email: emailInput.value.trim(),
-        direccion: document.getElementById('address').value.trim(),
-        telefono: document.getElementById('phone').value.trim()
+        address: document.getElementById('address').value.trim(),
+        phone: document.getElementById('phone').value.trim()
       };
 
-      const response = await createOrder({ items: itemsToSend, customer, userId: currentUser.id });
-      const savedOrder = response?.order;
+      const { order } = await createOrder({ items: itemsToSend, customer, userId: currentUser.id });
 
-      localStorage.setItem('lastOrder', JSON.stringify({
-        items: savedOrder ? savedOrder.items : cart,
-        total: savedOrder ? savedOrder.total : calculateTotal(cart),
-        customer: {
-          fullName: customer.nombre,
-          email: customer.email,
-          address: customer.direccion,
-          phone: customer.telefono
-        }
-      }));
+      localStorage.setItem('lastOrder', JSON.stringify({ items: order.items, total: order.total, customer }));
 
-      if (!savedOrder) {
-        recordSale(buildSale({
-          cart,
-          total: calculateTotal(cart),
-          customerName: customer.nombre,
-          customerEmail: customer.email
-        }));
-      }
-
-      localStorage.removeItem('cart');
+      clearCart();
       window.location.href = 'order-completed.html';
     } catch (error) {
       loadingOverlay.style.display = 'none';

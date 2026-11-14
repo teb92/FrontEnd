@@ -3,22 +3,30 @@ import { createElement } from './utils.js';
 
 const LOW_STOCK_LIMIT = 5;
 
+function isWebUrl(value) {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+}
+
 export function createProductImage(product, wrapperClass, placeholderClass) {
   const wrapper = createElement('div', wrapperClass);
 
   const showPlaceholder = () => {
-    wrapper.innerHTML = '';
-    wrapper.appendChild(createElement('div', placeholderClass, '🐾'));
+    wrapper.replaceChildren(createElement('div', placeholderClass, 'Sin imagen'));
   };
 
-  if (!product.imagen) {
+  if (!isWebUrl(product.image)) {
     showPlaceholder();
     return wrapper;
   }
 
   const image = document.createElement('img');
-  image.src = product.imagen;
-  image.alt = product.nombre;
+  image.src = product.image;
+  image.alt = product.name;
   image.addEventListener('error', showPlaceholder);
   wrapper.appendChild(image);
   return wrapper;

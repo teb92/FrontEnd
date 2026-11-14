@@ -1,7 +1,8 @@
 export function getCart() {
   try {
     const cart = JSON.parse(localStorage.getItem('cart'));
-    return Array.isArray(cart) ? cart : [];
+    if (!Array.isArray(cart)) return [];
+    return cart.filter((item) => item && item.id !== undefined && Number(item.quantity) >= 1);
   } catch {
     return [];
   }
@@ -16,15 +17,9 @@ export function addToCart(product, quantity = 1) {
   const existingItem = cart.find(item => String(item.id) === String(product.id));
 
   if (existingItem) {
-    const currentQty = Number(existingItem.cantidad || existingItem.quantity || 0);
-    const addQty = Number(quantity);
-    if (existingItem.cantidad !== undefined) {
-      existingItem.cantidad = currentQty + addQty;
-    } else {
-      existingItem.quantity = currentQty + addQty;
-    }
+    existingItem.quantity += Number(quantity);
   } else {
-    cart.push({ ...product, cantidad: Number(quantity) });
+    cart.push({ ...product, quantity: Number(quantity) });
   }
 
   saveCart(cart);
@@ -32,7 +27,7 @@ export function addToCart(product, quantity = 1) {
 
 export function getCartQuantity(productId) {
   const item = getCart().find(i => String(i.id) === String(productId));
-  return item ? Number(item.cantidad || item.quantity || 0) : 0;
+  return item ? item.quantity : 0;
 }
 
 export function hasStockFor(product, quantity = 1) {
@@ -44,12 +39,7 @@ export function updateQuantity(productId, newQuantity) {
   const cart = getCart();
   const item = cart.find(i => String(i.id) === String(productId));
   if (item) {
-    const validQty = Math.max(1, Number(newQuantity));
-    if (item.cantidad !== undefined) {
-      item.cantidad = validQty;
-    } else {
-      item.quantity = validQty;
-    }
+    item.quantity = Math.max(1, Number(newQuantity));
     saveCart(cart);
   }
 }
@@ -59,21 +49,37 @@ export function removeFromCart(productId) {
   saveCart(cart);
 }
 
+export function syncCartWithProducts(products) {
+  const changes = [];
+  const updatedCart = [];
+
+  getCart().forEach((item) => {
+    const product = products.find((p) => String(p.id) === String(item.id));
+    const name = product ? product.name : item.name;
+    const stock = product ? Number(product.stock) : 0;
+
+    if (stock <= 0) {
+      changes.push({ type: 'removed', name, quantity: 0 });
+      return;
+    }
+    if (item.quantity > stock) {
+      changes.push({ type: 'reduced', name, quantity: stock });
+    }
+    updatedCart.push({ ...product, quantity: Math.min(item.quantity, stock) });
+  });
+
+  saveCart(updatedCart);
+  return changes;
+}
+
 export function clearCart() {
   localStorage.removeItem('cart');
 }
 
 export function getCartCount() {
-  return getCart().reduce((total, item) => {
-    const qty = Number(item.cantidad || item.quantity || 1);
-    return total + qty;
-  }, 0);
+  return getCart().reduce((total, item) => total + item.quantity, 0);
 }
 
 export function getCartTotal() {
-  return getCart().reduce((total, item) => {
-    const price = Number(item.precio || item.price || 0);
-    const qty = Number(item.cantidad || item.quantity || 1);
-    return total + (price * qty);
-  }, 0);
+  return getCart().reduce((total, item) => total + (item.price * item.quantity), 0);
 }

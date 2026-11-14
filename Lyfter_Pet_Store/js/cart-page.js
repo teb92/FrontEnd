@@ -1,7 +1,17 @@
-import { getCart, saveCart, getCartTotal } from './cart.js';
-import { updateCartBadge } from './layout.js';
+import {
+  getCart,
+  getCartTotal,
+  getCartQuantity,
+  hasStockFor,
+  updateQuantity,
+  removeFromCart
+} from './cart.js';
+import { refreshCart } from './cart-sync.js';
+import { renderLayout, updateCartBadge } from './layout.js';
 import { isLoggedIn } from './session.js';
-import { renderLoginRequired } from './ui.js';
+import { renderLoginRequired, showToast } from './ui.js';
+import { createElement, formatColones } from './utils.js';
+import { createProductImage } from './product-ui.js';
 
 export function renderCartPage() {
   const container = document.getElementById('cart-container');
@@ -13,42 +23,63 @@ export function renderCartPage() {
   const cart = getCart();
 
   if (cart.length === 0) {
-    container.innerHTML = '<p class="empty-msg">Tu carrito está vacío 🐾</p>';
-    totalElement.textContent = '₡0';
+    container.replaceChildren(createElement('p', 'empty-msg', 'Tu carrito está vacío'));
+    totalElement.textContent = formatColones(0);
     if (checkoutBtn) checkoutBtn.style.display = 'none';
     return;
   }
 
   if (checkoutBtn) checkoutBtn.style.display = 'block';
 
-  container.innerHTML = cart.map((item, index) => {
-    const name = item.nombre || item.name || 'Producto';
-    const price = Number(item.precio || item.price || 0);
-    const qty = Number(item.cantidad || item.quantity || 1);
-    const imgSrc = item.imagen || item.image || item.img || item.foto || 'https://via.placeholder.com/80?text=🐾';
-    const subtotal = price * qty;
-
-    return `
-      <div class="cart-card">
-        <img src="${imgSrc}" alt="${name}">
-        <div class="cart-card-info">
-          <h3>${name}</h3>
-          <p>Precio: ₡${price.toLocaleString('es-CR')}</p>
-          <p>Subtotal: <strong>₡${subtotal.toLocaleString('es-CR')}</strong></p>
-          <div class="cart-card-controls">
-            <button class="btn-qty" data-action="decrease" data-index="${index}">-</button>
-            <span>${qty}</span>
-            <button class="btn-qty" data-action="increase" data-index="${index}">+</button>
-          </div>
-        </div>
-        <button class="btn-delete" data-action="delete" data-index="${index}">Eliminar</button>
-      </div>
-    `;
-  }).join('');
-
-  totalElement.textContent = `₡${getCartTotal().toLocaleString('es-CR')}`;
+  container.replaceChildren(...cart.map(createCartCard));
+  totalElement.textContent = formatColones(getCartTotal());
 
   addCartEvents();
+}
+
+function createActionButton(className, text, action, productId, label) {
+  const button = createElement('button', className, text);
+  button.type = 'button';
+  button.dataset.action = action;
+  button.dataset.id = productId;
+  if (label) button.setAttribute('aria-label', label);
+  return button;
+}
+
+function createCartCard(item) {
+  const { id, name, price, quantity } = item;
+  const canAddMore = hasStockFor(item);
+
+  const info = createElement('div', 'cart-card-info');
+  info.appendChild(createElement('h3', '', name));
+  info.appendChild(createElement('p', '', `Precio: ${formatColones(price)}`));
+
+  const subtotal = createElement('p', '', 'Subtotal: ');
+  subtotal.appendChild(createElement('strong', '', formatColones(price * quantity)));
+  info.appendChild(subtotal);
+
+  const increaseButton = createActionButton('btn-qty', '+', 'increase', id, 'Agregar una unidad');
+  increaseButton.disabled = !canAddMore;
+
+  const controls = createElement('div', 'cart-card-controls');
+  controls.append(
+    createActionButton('btn-qty', '-', 'decrease', id, 'Quitar una unidad'),
+    createElement('span', '', quantity),
+    increaseButton
+  );
+  info.appendChild(controls);
+
+  if (!canAddMore) {
+    info.appendChild(createElement('small', 'cart-stock-note', 'Máximo disponible en tu carrito'));
+  }
+
+  const card = createElement('div', 'cart-card');
+  card.append(
+    createProductImage(item, 'cart-card-image', 'cart-card-placeholder'),
+    info,
+    createActionButton('btn-delete', 'Eliminar', 'delete', id)
+  );
+  return card;
 }
 
 function addCartEvents() {
@@ -60,23 +91,29 @@ function addCartEvents() {
     if (!btn) return;
 
     const action = btn.dataset.action;
-    const index = Number(btn.dataset.index);
-    const cart = getCart();
+    const productId = btn.dataset.id;
+    if (!action || !productId) return;
+
+    const currentQty = getCartQuantity(productId);
 
     if (action === 'increase') {
-      cart[index].cantidad = Number(cart[index].cantidad || cart[index].quantity || 1) + 1;
+      const item = getCart().find((cartItem) => String(cartItem.id) === productId);
+      if (!item) return;
+      if (!hasStockFor(item)) {
+        showToast(`Solo hay ${item.stock} unidad(es) disponible(s) de este producto.`, 'error');
+        return;
+      }
+      updateQuantity(productId, currentQty + 1);
     } else if (action === 'decrease') {
-      const currentQty = Number(cart[index].cantidad || cart[index].quantity || 1);
       if (currentQty > 1) {
-        cart[index].cantidad = currentQty - 1;
+        updateQuantity(productId, currentQty - 1);
       } else {
-        cart.splice(index, 1);
+        removeFromCart(productId);
       }
     } else if (action === 'delete') {
-      cart.splice(index, 1);
+      removeFromCart(productId);
     }
 
-    saveCart(cart);
     renderCartPage();
     updateCartBadge();
   };
@@ -88,10 +125,18 @@ function addCartEvents() {
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
+  renderLayout();
+
   if (!isLoggedIn()) {
     renderLoginRequired(document.querySelector('main'));
     return;
   }
+
+  const loading = createElement('p', 'loading-state', 'Cargando carrito...');
+  loading.setAttribute('role', 'status');
+  document.getElementById('cart-container').replaceChildren(loading);
+  await refreshCart();
   renderCartPage();
+  updateCartBadge();
 });

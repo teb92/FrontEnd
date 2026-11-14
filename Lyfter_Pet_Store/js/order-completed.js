@@ -13,7 +13,7 @@ function renderCustomer(customer, box) {
   box.innerHTML = '';
 
   const fields = [
-    ['Cliente', customer.fullName],
+    ['Cliente', customer.name],
     ['Correo', customer.email],
     ['Dirección', customer.address]
   ];
@@ -31,12 +31,10 @@ function renderItems(items, tbody) {
   tbody.innerHTML = '';
 
   items.forEach((item) => {
-    const name = item.nombre || item.name || 'Producto';
-    const qty = Number(item.cantidad || item.quantity || 1);
-    const price = Number(item.precio || item.price || 0);
+    const { name, price, quantity } = item;
 
     const tr = document.createElement('tr');
-    [name, qty, formatColones(price), formatColones(price * qty)].forEach((text) => {
+    [name, quantity, formatColones(price), formatColones(price * quantity)].forEach((text) => {
       const td = document.createElement('td');
       td.textContent = text;
       tr.appendChild(td);

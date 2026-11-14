@@ -1,14 +1,9 @@
-// Location: js/forgot-password.js
-// Password recovery in two steps (both live in forgot-password.html):
-//   1. The user types their email and the backend sends a 6 digit verification code.
-//   2. The user types the code and a new password, and the backend changes it.
 import { requestPasswordReset, resetPassword } from './services/api.js';
 import { renderLayout } from './layout.js';
 import { prepareForm, applyFieldErrors, showFormMessage, clearFormMessage, showToast } from './ui.js';
 import { validateEmail, validateResetCode, validatePassword, validatePasswordConfirmation } from './validators.js';
 import { attachInputMask, formatVerificationCode } from './input-masks.js';
 
-// Used when the server does not say how long to wait before asking for another code
 const DEFAULT_RESEND_SECONDS = 60;
 
 const stepEmail = document.getElementById('step-email');
@@ -19,17 +14,15 @@ const resendButton = document.getElementById('resend-btn');
 
 let countdownTimer = null;
 
-renderLayout(); // shared header + footer
+renderLayout();
 prepareForm(emailForm);
 prepareForm(resetForm);
 
-// The code field only accepts digits (max 6) and lets phones offer the code from the email/SMS
 attachInputMask(document.getElementById('code'), formatVerificationCode, {
   inputmode: 'numeric',
   autocomplete: 'one-time-code'
 });
 
-// ---------- Steps ----------
 function showStep(step) {
   stepEmail.hidden = step !== 'email';
   stepReset.hidden = step !== 'reset';
@@ -41,7 +34,6 @@ function showStep(step) {
   firstField.focus();
 }
 
-// ---------- "Reenviar código" button with a countdown ----------
 function startCountdown(seconds) {
   clearInterval(countdownTimer);
   let remaining = seconds;
@@ -64,14 +56,12 @@ function startCountdown(seconds) {
   }, 1000);
 }
 
-// Asks for a code and starts the wait before the next request
 async function sendCode(email) {
   const data = await requestPasswordReset(email);
   startCountdown(data?.retry_after || DEFAULT_RESEND_SECONDS);
   return data;
 }
 
-// ---------- Step 1: request the code ----------
 emailForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearFormMessage(emailForm);
@@ -86,17 +76,14 @@ emailForm.addEventListener('submit', async (event) => {
     await sendCode(email);
     document.getElementById('reset-email').value = email;
     showStep('reset');
-    // The wording is the same for registered and unregistered emails: the page never reveals which exist
     showFormMessage(resetForm, 'Si el correo está registrado, te enviamos un código de 6 dígitos. Vence en 10 minutos.', 'success');
   } catch (error) {
-    // For example "Espera 40 segundos...": the user may already have a code ("Ya tengo un código")
     showFormMessage(emailForm, error.message);
   } finally {
     submitButton.disabled = false;
   }
 });
 
-// "Ya tengo un código": go straight to step 2 without asking for a new one
 document.getElementById('have-code-btn').addEventListener('click', () => {
   const typedEmail = document.getElementById('email').value.trim();
   if (typedEmail) document.getElementById('reset-email').value = typedEmail;
@@ -104,13 +91,11 @@ document.getElementById('have-code-btn').addEventListener('click', () => {
   showStep('reset');
 });
 
-// "Usar otro correo": back to step 1
 document.getElementById('change-email-btn').addEventListener('click', () => {
   clearFormMessage(resetForm);
   showStep('email');
 });
 
-// ---------- Resend the code ----------
 resendButton.addEventListener('click', async () => {
   clearFormMessage(resetForm);
 
@@ -124,14 +109,13 @@ resendButton.addEventListener('click', async () => {
   } catch (error) {
     showFormMessage(resetForm, error.message);
     if (error.status === 429 && error.data?.retry_after) {
-      startCountdown(error.data.retry_after); // the server told us how long to wait
+      startCountdown(error.data.retry_after);
     } else {
       resendButton.disabled = false;
     }
   }
 });
 
-// ---------- Step 2: change the password ----------
 resetForm.addEventListener('submit', async (event) => {
   event.preventDefault();
   clearFormMessage(resetForm);
@@ -141,7 +125,6 @@ resetForm.addEventListener('submit', async (event) => {
   const password = document.getElementById('new-password').value;
   const confirmation = document.getElementById('confirm-password').value;
 
-  // Validate before calling the API (the backend validates again)
   const isValid = applyFieldErrors(resetForm, {
     'reset-email': validateEmail(email),
     code: validateResetCode(code),
@@ -164,7 +147,6 @@ resetForm.addEventListener('submit', async (event) => {
       window.location.href = 'login.html?reset=1';
     }, 1500);
   } catch (error) {
-    // For example "Código inválido o vencido. Solicita uno nuevo."
     showFormMessage(resetForm, error.message);
     submitButton.disabled = false;
   }

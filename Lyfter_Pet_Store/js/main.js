@@ -12,18 +12,18 @@ function createProductCard(product) {
   const card = createElement('article', 'product-card');
 
   const info = createElement('div', 'product-card-info');
-  info.appendChild(createElement('h3', '', product.nombre));
-  if (product.categoria) {
-    info.appendChild(createElement('p', 'product-card-category', product.categoria));
+  info.appendChild(createElement('h3', '', product.name));
+  if (product.category) {
+    info.appendChild(createElement('p', 'product-card-category', product.category));
   }
-  info.appendChild(createElement('p', 'price', formatColones(product.precio)));
+  info.appendChild(createElement('p', 'price', formatColones(product.price)));
   info.appendChild(createStockBadge(stock));
 
   const actions = createElement('div', 'card-actions');
 
   const addButton = createElement('button', 'btn-primary btn-add-cart');
   addButton.type = 'button';
-  addButton.setAttribute('aria-label', `Añadir ${product.nombre} al carrito`);
+  addButton.setAttribute('aria-label', `Añadir ${product.name} al carrito`);
   updateAddToCartButton(addButton, product);
 
   addButton.addEventListener('click', () => {
@@ -36,7 +36,7 @@ function createProductCard(product) {
     addToCart(product);
     updateAddToCartButton(addButton, product);
     updateCartBadge();
-    showToast(`¡${product.nombre} añadido al carrito!`);
+    showToast(`¡${product.name} añadido al carrito!`);
   });
 
   const detailsLink = createElement('a', 'btn-secondary btn-details', 'Ver detalles');
@@ -76,7 +76,7 @@ function filterProducts() {
   const showOnlyAvailable = document.querySelector('#filter-available').checked;
 
   const filtered = allProducts.filter(product => {
-    const matchesText = String(product.nombre).toLowerCase().includes(searchText);
+    const matchesText = String(product.name).toLowerCase().includes(searchText);
     const matchesAvailability = showOnlyAvailable ? product.stock > 0 : true;
     return matchesText && matchesAvailability;
   });

@@ -24,11 +24,11 @@ export function readProductForm(form) {
   const valueOf = (id) => form.querySelector(`#${id}`).value.trim();
 
   return {
-    nombre: valueOf('name'),
-    descripcion: valueOf('description'),
-    precio: parseFloat(valueOf('price')),
-    categoria: valueOf('category'),
-    imagen: valueOf('image'),
+    name: valueOf('name'),
+    description: valueOf('description'),
+    price: parseFloat(valueOf('price')),
+    category: valueOf('category'),
+    image: valueOf('image'),
     stock: parseInt(valueOf('stock'), 10)
   };
 }
@@ -38,18 +38,18 @@ export function fillProductForm(form, product) {
     form.querySelector(`#${id}`).value = value ?? '';
   };
 
-  setValue('name', product.nombre);
-  setValue('description', product.descripcion);
-  setValue('price', product.precio);
-  setValue('category', product.categoria);
-  setValue('image', product.imagen);
+  setValue('name', product.name);
+  setValue('description', product.description);
+  setValue('price', product.price);
+  setValue('category', product.category);
+  setValue('image', product.image);
   setValue('stock', product.stock);
 }
 
 export function fillCategoryOptions(datalist, products) {
   if (!datalist) return;
 
-  const categories = [...new Set(products.map((product) => product.categoria).filter(Boolean))].sort();
+  const categories = [...new Set(products.map((product) => product.category).filter(Boolean))].sort();
   datalist.replaceChildren(
     ...categories.map((category) => {
       const option = document.createElement('option');

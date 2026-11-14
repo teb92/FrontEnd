@@ -119,7 +119,6 @@ export function renderErrorState(container, { title, message, onRetry }) {
 export function renderLoginRequired(container) {
   container.innerHTML = `
     <section class="login-required" aria-labelledby="login-required-title">
-      <div class="login-required-icon" aria-hidden="true">🔒</div>
       <h1 id="login-required-title">Debes iniciar sesión para continuar</h1>
       <p>Protege tus compras y gestiona tu perfil con facilidad.</p>
       <a href="login.html" class="btn-primary">Ir a iniciar sesión</a>

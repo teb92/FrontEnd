@@ -146,8 +146,6 @@ export function validateContactMessage(value) {
   return null;
 }
 
-// ---------- Password recovery ----------
-// The verification code that arrives by email: exactly 6 digits
 export function validateResetCode(value) {
   const code = clean(value);
   if (!code) return REQUIRED_MESSAGE;

@@ -37,7 +37,6 @@ export function formatCvv(value) {
   return onlyDigits(value).slice(0, 4);
 }
 
-// Verification code of the password recovery: digits only, up to 6
 export function formatVerificationCode(value) {
   return onlyDigits(value).slice(0, 6);
 }

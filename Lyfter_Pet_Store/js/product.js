@@ -2,13 +2,8 @@ import { getProductById } from './services/api.js';
 import { addToCart, hasStockFor } from './cart.js';
 import { renderLayout, updateCartBadge } from './layout.js';
 import { renderErrorState, showToast } from './ui.js';
-import { createElement, formatColones } from './utils.js';
+import { createElement, formatColones, getProductIdFromUrl } from './utils.js';
 import { createProductImage, createStockBadge, updateAddToCartButton } from './product-ui.js';
-
-function getProductIdFromUrl() {
-  const id = new URLSearchParams(window.location.search).get('id');
-  return /^\d+$/.test(id ?? '') ? id : null;
-}
 
 function createBackLink() {
   const link = createElement('a', 'btn-secondary', 'Volver al catálogo');
@@ -18,16 +13,16 @@ function createBackLink() {
 
 function renderProduct(product, container) {
   const stock = Number(product.stock || 0);
-  document.title = `${product.nombre} - PawStore`;
+  document.title = `${product.name} - PawStore`;
 
   const info = createElement('div', 'product-detail-info');
-  info.appendChild(createElement('h1', '', product.nombre));
-  info.appendChild(createElement('p', 'product-detail-price', formatColones(product.precio)));
-  if (product.categoria) {
-    info.appendChild(createElement('p', 'product-detail-category', product.categoria));
+  info.appendChild(createElement('h1', '', product.name));
+  info.appendChild(createElement('p', 'product-detail-price', formatColones(product.price)));
+  if (product.category) {
+    info.appendChild(createElement('p', 'product-detail-category', product.category));
   }
   info.appendChild(createStockBadge(stock));
-  info.appendChild(createElement('p', 'product-detail-description', product.descripcion || 'Este producto aún no tiene descripción.'));
+  info.appendChild(createElement('p', 'product-detail-description', product.description || 'Este producto aún no tiene descripción.'));
 
   const actions = createElement('div', 'product-detail-actions');
   const addButton = createElement('button', 'btn-primary');
@@ -42,7 +37,7 @@ function renderProduct(product, container) {
     addToCart(product);
     updateAddToCartButton(addButton, product);
     updateCartBadge();
-    showToast(`¡${product.nombre} añadido al carrito!`);
+    showToast(`¡${product.name} añadido al carrito!`);
   });
 
   actions.append(addButton, createBackLink());

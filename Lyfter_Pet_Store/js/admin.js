@@ -12,7 +12,6 @@ import {
 import { validateProductForm, readProductForm, fillCategoryOptions } from './product-form.js';
 import { createElement, formatColones } from './utils.js';
 import {
-  getLocalSales,
   normalizeOrder,
   summarizeItems,
   formatSaleDate,
@@ -25,7 +24,6 @@ const productForm = document.getElementById('product-form');
 const addButton = productForm.querySelector('button[type="submit"]');
 const productsBody = document.getElementById('products-table-body');
 const salesBody = document.getElementById('sales-table-body');
-const salesNotice = document.getElementById('sales-notice');
 const salesSummary = document.getElementById('sales-summary');
 
 const PRODUCT_COLUMNS = 6;
@@ -53,7 +51,7 @@ function showTableError(tbody, columns, title, message, onRetry) {
 function createProductRow(product) {
   const row = document.createElement('tr');
 
-  [product.id, product.nombre, formatColones(product.precio), product.categoria, product.stock].forEach((value) => {
+  [product.id, product.name, formatColones(product.price), product.category, product.stock].forEach((value) => {
     row.appendChild(createElement('td', '', String(value ?? '—')));
   });
 
@@ -122,30 +120,16 @@ function createSaleRow(order) {
 }
 
 async function renderSales() {
-  salesNotice.hidden = true;
   salesSummary.textContent = '';
   showTableMessage(salesBody, SALES_COLUMNS, 'Cargando ventas...');
 
   let rawOrders;
-  let isLocalHistory = false;
-
   try {
     rawOrders = await getOrders();
   } catch (error) {
-    if (error.status === 404 || error.status === 405) {
-      rawOrders = getLocalSales();
-      isLocalHistory = true;
-    } else {
-      console.error('Error al cargar las ventas:', error);
-      showTableError(salesBody, SALES_COLUMNS, 'No pudimos cargar las ventas', error.message, renderSales);
-      return;
-    }
-  }
-
-  if (isLocalHistory) {
-    salesNotice.textContent =
-      'El backend no tiene un endpoint de ventas (GET /orders). Se muestran las compras realizadas desde este navegador.';
-    salesNotice.hidden = false;
+    console.error('Error al cargar las ventas:', error);
+    showTableError(salesBody, SALES_COLUMNS, 'No pudimos cargar las ventas', error.message, renderSales);
+    return;
   }
 
   const orders = sortNewestFirst(rawOrders.map(normalizeOrder));

@@ -1,17 +1,17 @@
-export const API_BASE_URL = 'http://127.0.0.1:5000';
+import { getToken, clearSession } from '../session.js';
 
-const API_KEY = 'mi_clave_secreta_123';
+export const API_BASE_URL = 'http://127.0.0.1:5000';
 
 function extractErrorMessage(data) {
   if (!data) return '';
   if (Array.isArray(data.errors)) return data.errors.join(', ');
-  return data.message || data.error || '';
+  return data.message || '';
 }
 
 async function request(path, { method = 'GET', body, auth = false, fallback = 'Ocurrió un error inesperado.' } = {}) {
   const headers = {};
   if (body !== undefined) headers['Content-Type'] = 'application/json';
-  if (auth) headers['X-API-Key'] = API_KEY;
+  if (auth) headers['Authorization'] = `Bearer ${getToken() || ''}`;
 
   let response;
   try {
@@ -32,9 +32,11 @@ async function request(path, { method = 'GET', body, auth = false, fallback = 'O
   }
 
   if (!response.ok) {
+    if (auth && response.status === 401) clearSession();
+
     const error = new Error(extractErrorMessage(data) || fallback);
     error.status = response.status;
-    error.data = data; // the full body, e.g. { retry_after } when the server asks the user to wait
+    error.data = data;
     throw error;
   }
   return data;
@@ -74,30 +76,25 @@ export function loginUser(email, password) {
   return request('/login', { method: 'POST', body: { email, password }, fallback: 'Correo o contraseña incorrectos' });
 }
 
-export function registerUser({ nombre, email, password }) {
-  return request('/register', { method: 'POST', body: { nombre, email, password }, fallback: 'Error al registrar usuario' });
+export async function getProfile() {
+  const data = await request('/me', { auth: true, fallback: 'No se pudo verificar la sesión' });
+  return data.user;
 }
 
-// Password recovery.
-// Asks the backend to email a 6 digit code. The answer is the same whether the email is registered or not.
-// Resolves to { message, retry_after } (seconds to wait before asking for another code).
+export function registerUser({ name, email, password }) {
+  return request('/register', { method: 'POST', body: { name, email, password }, fallback: 'Error al registrar usuario' });
+}
+
 export function requestPasswordReset(email) {
   return request('/forgot-password', { method: 'POST', body: { email }, fallback: 'No se pudo enviar el código' });
 }
 
-// Changes the password using the code that was emailed. The server answers 400 if the code is wrong or expired.
 export function resetPassword({ email, code, password }) {
   return request('/reset-password', { method: 'POST', body: { email, code, password }, fallback: 'No se pudo cambiar la contraseña' });
 }
 
-export async function getOrders() {
-  const data = await request('/orders', { auth: true, fallback: 'Error al obtener las ventas' });
-
-  if (Array.isArray(data)) return data;
-  const wrapped = data && (data.orders || data.ordenes || data.ventas);
-  if (Array.isArray(wrapped)) return wrapped;
-
-  throw new Error('El servidor devolvió una respuesta inesperada.');
+export function getOrders() {
+  return request('/orders', { auth: true, fallback: 'Error al obtener las ventas' });
 }
 
 export function createOrder({ items, customer, userId }) {

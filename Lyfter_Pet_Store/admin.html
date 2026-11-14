@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" class="auth-pending">
 
 <head>
     <meta charset="UTF-8">
@@ -7,8 +7,7 @@
     <title>PawStore - Administración</title>
     <link rel="stylesheet" href="css/styles.css">
 
-    <!-- Access protection -->
-    <script src="js/auth-guard.js"></script>
+    <script type="module" src="js/auth-guard.js"></script>
 </head>
 
 <body>
@@ -17,7 +16,6 @@
         <h1>Administración de productos</h1>
         <p>En esta sección puedes gestionar el catálogo de productos de PawStore.</p>
 
-        <!-- CARD 1: Product list -->
         <section class="card">
             <h2>Listado de Productos</h2>
             <table class="products-table">
@@ -32,20 +30,16 @@
                     </tr>
                 </thead>
                 <tbody id="products-table-body">
-                    <!-- Filled dynamically by js/admin.js -->
                 </tbody>
             </table>
         </section>
 
-        <!-- CARD 2: Completed sales -->
         <section class="card">
             <div class="card-header">
                 <h2>Ventas realizadas</h2>
                 <button type="button" id="refresh-sales-btn" class="btn-secondary">Actualizar</button>
             </div>
 
-            <!-- Shown only when the sales come from this browser instead of the API -->
-            <p id="sales-notice" class="sales-notice" hidden></p>
             <p id="sales-summary" class="sales-summary" aria-live="polite"></p>
 
             <div class="table-scroll">
@@ -60,13 +54,11 @@
                         </tr>
                     </thead>
                     <tbody id="sales-table-body">
-                        <!-- Filled by js/admin.js -->
                     </tbody>
                 </table>
             </div>
         </section>
 
-        <!-- CARD 3: Add product form -->
         <section class="card">
             <h2>Agregar nuevo producto</h2>
             <form id="product-form">
@@ -108,7 +100,6 @@
         </section>
     </main>
 
-    <!-- Header and footer are injected by js/admin.js (through js/layout.js) -->
     <script src="js/admin.js" type="module"></script>
 </body>
 
